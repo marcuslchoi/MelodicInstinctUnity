@@ -6,6 +6,7 @@ public class MusicNote : MonoBehaviour {
 	public static string[] notesFlat = new string[] { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
 	public static string[] notesSharp = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
+
 	private string _nameFlat;
 	private string _nameSharp;
 	private ScaleDegree _solfege;
