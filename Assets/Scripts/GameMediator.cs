@@ -30,13 +30,14 @@ public class GameMediator : MonoBehaviour {
 
 		//TODO: INSTANTIATE THE BUTTONS AT CORRECT POSITION EACH TIME TONIC CHANGES
 
-		Scale myScale = new Scale (NoteName.C, ScaleType.MAJOR);
+		var tonic = "C";
+
+		Scale myScale = new Scale (tonic, ScaleType.MAJOR);
 
 //		foreach (var note in myScale.MusicNotes) {
 //		
 //			print (note.Solfege + " is " + note.NameFlat);
 //		}
-
 
 		var i = 0;
 		foreach (var toneButton in ToneButtonsWhite) 
@@ -49,7 +50,6 @@ public class GameMediator : MonoBehaviour {
 
 			i++;
 		}
-
 	}
 	
 	// Update is called once per frame

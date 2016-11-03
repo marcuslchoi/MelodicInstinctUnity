@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System;
 
-public enum NoteName { C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B, C1, Db1, D1, Eb1, E1, F1, Gb1, G1, Ab1, A1, Bb1, B1 }
-//public enum NoteNameSharp { C, Cs, D, Ds, E, F, Fs, G, Gs, A, As, B, C1, Cs1, D1, Ds1, E1, F1, Fs1, G1, Gs1, A1, As1, B1 }
 public enum ScaleDegree { DO, RA, RE, ME, MI, FA, SE, SOL, LE, LA, TE, TI, DO1, RA1, RE1, ME1, MI1, FA1, SE1, SOL1, LE1, LA1, TE1, TI1 }
 public enum ScaleType { MAJOR, RELATIVE_MINOR, MELODIC_MINOR, HARMONIC_MINOR }
 
@@ -26,15 +24,15 @@ public class Scale : MonoBehaviour {
 		{ScaleType.MAJOR,Major}, {ScaleType.RELATIVE_MINOR,RelativeMinor}};
 	//END STATICS
 
-	private NoteName _tonic;
+	private string _tonic;
 
-	public Scale(NoteName tonic, ScaleType type)
+	public Scale(string tonic, ScaleType type)
 	{
 		Type = type;
 		Tonic = tonic;
 		PopulateMusicNotes(tonic);
 	}
-	public NoteName Tonic
+	public string Tonic
 	{
 		get{ return _tonic; }
 		set{ _tonic = value; }
@@ -52,38 +50,36 @@ public class Scale : MonoBehaviour {
 		set;
 	}
 
-	private void PopulateMusicNotes(NoteName tonic)
+	private void PopulateMusicNotes(string tonic)
 	{
-		int tonicIndex = (int)tonic;
+		int tonicIndex = System.Array.IndexOf(MusicNote.NotesFlat, tonic);
 
 		int i;
 		int toneCount = 12;
 		var solfegeArray = Enum.GetNames(typeof(ScaleDegree));
-		var noteArray = Enum.GetNames(typeof(NoteName));
-		var solfNoteDict = new Dictionary<ScaleDegree, NoteName>();
+		var solfNoteDict = new Dictionary<ScaleDegree, string>();
 
 		string solfKeyStr;
 		string noteStr;
 		ScaleDegree solfKey;
-		NoteName note;
 
 		//ie, do = "Bb"
 		//these are the notes below the root
 		for (i = tonicIndex; i > 0; i--)
 		{
 			solfKeyStr = solfegeArray[toneCount - i];
-			noteStr = noteArray[tonicIndex - i];
+			noteStr = MusicNote.NotesFlat[tonicIndex - i];
 
 			solfKey = (ScaleDegree)Enum.Parse(typeof(ScaleDegree), solfKeyStr);
-			note = (NoteName)Enum.Parse(typeof(NoteName), noteStr);
+			//note = (NoteName)Enum.Parse(typeof(NoteName), noteStr);
 
-			solfNoteDict[solfKey] = note;
+			solfNoteDict[solfKey] = noteStr;
 		}
 
 		//starts at root index to make sure root is lower 'DO'
 		for (i = tonicIndex; i < solfegeArray.Length; i++)
 		{
-			noteStr = noteArray[i];
+			noteStr = MusicNote.NotesFlat[i];
 
 			if (i >= tonicIndex && i < toneCount || i >= toneCount + tonicIndex)
 			{
@@ -97,9 +93,9 @@ public class Scale : MonoBehaviour {
 			}
 
 			solfKey = (ScaleDegree)Enum.Parse(typeof(ScaleDegree), solfKeyStr);
-			note = (NoteName)Enum.Parse(typeof(NoteName), noteStr);
+			//note = (NoteName)Enum.Parse(typeof(NoteName), noteStr);
 
-			solfNoteDict[solfKey] = note;
+			solfNoteDict[solfKey] = noteStr;
 		}
 
 		MusicNotes = new List<MusicNote>();
@@ -115,15 +111,5 @@ public class Scale : MonoBehaviour {
 
 		}
 
-	}
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }

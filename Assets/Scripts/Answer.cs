@@ -46,13 +46,4 @@ public class Answer : MonoBehaviour {
 		get{ return _ansMelody; }
 		set{ _ansMelody = value; }
 	}
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

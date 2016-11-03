@@ -1,15 +1,39 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MusicNote : MonoBehaviour {
 
-	public static string[] notesFlat = new string[] { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
-	public static string[] notesSharp = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+	private static string[] _notesFlat = new string[] { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B","C1", "Db1", "D1", "Eb1", "E1", "F1", "Gb1", "G1", "Ab1", "A1", "Bb1", "B1" };
+	private static string[] _notesSharp = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B","C1", "C#1", "D1", "D#1", "E1", "F1", "F#1", "G1", "G#1", "A1", "A#1", "B1" };
 
+	private static Dictionary<string,string> _flatToSharp = new Dictionary<string,string>();
 
 	private string _nameFlat;
 	private string _nameSharp;
 	private ScaleDegree _solfege;
+
+	//system calls this
+	static MusicNote()
+	{
+		//initialize flatToSharp static dictionary
+		for (var i = 0; i < NotesFlat.Length; i++)
+			FlatToSharp [NotesFlat [i]] = NotesSharp [i];
+	
+	}
+
+	public static Dictionary<string,string> FlatToSharp 
+	{
+		get{ return _flatToSharp; }
+	}
+	public static string[] NotesFlat 
+	{
+		get{ return _notesFlat; }
+	}
+	public static string[] NotesSharp 
+	{
+		get{ return _notesSharp; }
+	}
 
 	public MusicNote(ScaleDegree solfege, string nameFlat)
 	{
@@ -17,24 +41,7 @@ public class MusicNote : MonoBehaviour {
 
 		NameFlat = nameFlat;
 
-		//adds a higher octave indicator to sharp names
-		var isHigherOctave = false;
-		var higherOctIndicator = "1";
-
-		var nameFlatTrunc = nameFlat;
-
-		if (nameFlat.Contains(higherOctIndicator))
-		{
-			isHigherOctave = true;
-			nameFlatTrunc = nameFlat.Remove(nameFlat.Length - 1);
-		}
-
-		int indexOfNameFlat = System.Array.IndexOf(notesFlat, nameFlatTrunc);
-
-		if (isHigherOctave)
-			NameSharp = notesSharp[indexOfNameFlat] + higherOctIndicator;
-		else
-			NameSharp = notesSharp[indexOfNameFlat];
+		NameSharp = MusicNote.FlatToSharp[nameFlat];
 
 	}
 
@@ -60,14 +67,5 @@ public class MusicNote : MonoBehaviour {
 		get{ return _solfege; }
 		set{ _solfege = value; }
 	}
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+		
 }
