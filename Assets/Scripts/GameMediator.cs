@@ -31,8 +31,13 @@ public class GameMediator : MonoBehaviour {
 		//TODO: INSTANTIATE THE BUTTONS AT CORRECT POSITION EACH TIME TONIC CHANGES
 
 		var tonic = "C";
+		var melodyLength = 6;
 
 		Scale myScale = new Scale (tonic, ScaleType.MAJOR);
+		currentMelody = new Melody (melodyLength, myScale);
+
+		foreach (var beat in currentMelody.NoteBeats)
+			print (beat);
 
 //		foreach (var note in myScale.MusicNotes) {
 //		

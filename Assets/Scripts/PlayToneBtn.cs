@@ -15,18 +15,6 @@ public class PlayToneBtn : MonoBehaviour {
 		AudioSource.PlayClipAtPoint (audioClip, new Vector3(0,0,0));
 		GameMediator.guesses++;
 
-		//solfege3D.SetActive (true);
-
-		//print (note + " clicked");
-
-//		var i = GameMediator.guesses;
-//
-//		if (GameMediator.currentMelody.Notes[i].Solfege == note.Solfege)
-//			//correct note
-//			GameMediator.guesses++;
-//		else
-//			GameMediator.guesses = 0;
-
 	}
 
 	// Use this for initialization

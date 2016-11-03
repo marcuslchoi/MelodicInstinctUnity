@@ -38,9 +38,7 @@ public class MusicNote : MonoBehaviour {
 	public MusicNote(ScaleDegree solfege, string nameFlat)
 	{
 		Solfege = solfege;
-
 		NameFlat = nameFlat;
-
 		NameSharp = MusicNote.FlatToSharp[nameFlat];
 
 	}
