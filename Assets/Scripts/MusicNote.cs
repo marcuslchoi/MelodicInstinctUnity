@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class MusicNote : MonoBehaviour {
 
-	private static string[] _notesFlat = new string[] { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B","C1", "Db1", "D1", "Eb1", "E1", "F1", "Gb1", "G1", "Ab1", "A1", "Bb1", "B1" };
-	private static string[] _notesSharp = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B","C1", "C#1", "D1", "D#1", "E1", "F1", "F#1", "G1", "G#1", "A1", "A#1", "B1" };
+	private static string[] _notesFlat = new string[] { "Cl", "Dbl", "Dl", "Ebl", "El", "Fl", "Gbl", "Gl", "Abl", "Al", "Bbl", "Bl","Ch", "Dbh", "Dh", "Ebh", "Eh", "Fh", "Gbh", "Gh", "Abh", "Ah", "Bbh", "Bh" };
+	private static string[] _notesSharp = new string[] { "Cl", "C#l", "Dl", "D#l", "El", "Fl", "F#l", "Gl", "G#l", "Al", "A#l", "Bl","Ch", "C#h", "Dh", "D#h", "Eh", "Fh", "F#h", "Gh", "G#h", "Ah", "A#h", "Bh" };
 
 	private static Dictionary<string,string> _flatToSharp = new Dictionary<string,string>();
 

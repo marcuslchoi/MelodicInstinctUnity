@@ -2,18 +2,21 @@
 using System.Collections;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayToneBtn : MonoBehaviour {
 
 	public MusicNote note;
 	AudioClip audioClip;
 	public Text toneText;
-	//public GameObject solfege3D;
+	public static string toneClicked;
 
-
-	public void OnPress()
+	public void OnClick()
 	{
-		AudioSource.PlayClipAtPoint (audioClip, new Vector3(0,0,0));
-		GameMediator.guesses++;
+		toneClicked = toneText.text;
+
+		AudioSource audioSource = GetComponent<AudioSource> (); // PlayClipAtPoint (audioClip, new Vector3(0,0,0));
+		audioSource.clip = audioClip;
+		audioSource.Play ();
 
 	}
 

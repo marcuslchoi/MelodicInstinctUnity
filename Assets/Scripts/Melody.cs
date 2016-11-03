@@ -10,14 +10,17 @@ public class Melody : MonoBehaviour {
 	private Scale _scale;
 	private List<MusicNote> _notes = new List<MusicNote>();
 	private List<float> _noteBeats = new List<float> ();	//the beats on which the notes are played
+	private int _tempoBPM;
 
 	//note beats of 1 4/4 measure
 	private List<float> POSSBEATS = new List<float>{1f,1.5f,2f,2.5f,3f,3.5f,4f,4.5f};
 
-	public Melody(int length, Scale scale)
+
+	public Melody(int length, Scale scale, int tempoBPM)
 	{
 		Length = length;
 		Scale = scale;
+		TempoBPM = tempoBPM;
 
 		GenerateMusicNotes();
 		GenerateNoteBeats ();
@@ -32,6 +35,12 @@ public class Melody : MonoBehaviour {
 		Length = answerNotes.Count;
 
 		//NoteBeats = noteBeats;
+	}
+
+	public int TempoBPM 
+	{
+		get{ return _tempoBPM; }
+		private set{ _tempoBPM = value; }
 	}
 
 	public List<float> NoteBeats 
@@ -50,6 +59,18 @@ public class Melody : MonoBehaviour {
 	{
 		get{return _notes;}
 		private set{ _notes = value; }
+	}
+
+	public Scale Scale
+	{
+		get{ return _scale; }
+		set{ _scale=value; }
+	}
+
+	//TODO: PLAY THE MELODY BASED ON NOTES, NOTEBEATS, BPM
+	public void Play()
+	{
+	
 	}
 
 	private void GenerateNoteBeats()
@@ -108,12 +129,6 @@ public class Melody : MonoBehaviour {
 			Notes.Add(Scale.MusicNotes[randNoteIndex]);
 
 		}
-	}
-
-	public Scale Scale
-	{
-		get{ return _scale; }
-		set{ _scale=value; }
 	}
 
 }
