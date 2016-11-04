@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
+using System.Text;
 
+//TODO: turn this into a class? ie Ra = Di = b2 = #1
 public enum ScaleDegree { DO, RA, RE, ME, MI, FA, SE, SOL, LE, LA, TE, TI, DO1, RA1, RE1, ME1, MI1, FA1, SE1, SOL1, LE1, LA1, TE1, TI1 }
 public enum ScaleType { MAJOR, RELATIVE_MINOR, MELODIC_MINOR, HARMONIC_MINOR }
 
@@ -20,7 +22,7 @@ public class Scale : MonoBehaviour {
 		ScaleDegree.DO1,ScaleDegree.RE1,ScaleDegree.ME1,ScaleDegree.FA1,ScaleDegree.SOL1,ScaleDegree.LE1,ScaleDegree.TE1};
 
 	//DICTIONARY CONTAINING KEY: SCALE TYPES, VALUES: LIST OF SCALE DEGREES 
-	public static Dictionary<ScaleType, List<ScaleDegree>> Dict = new Dictionary<ScaleType, List<ScaleDegree>>{
+	public static Dictionary<ScaleType, List<ScaleDegree>> TypeToDegrees = new Dictionary<ScaleType, List<ScaleDegree>>{
 		{ScaleType.MAJOR,Major}, {ScaleType.RELATIVE_MINOR,RelativeMinor}};
 	//END STATICS
 
@@ -30,7 +32,7 @@ public class Scale : MonoBehaviour {
 	{
 		Type = type;
 		Tonic = tonic;
-		PopulateMusicNotes(tonic);
+		PopulateMusicNotes();
 	}
 	public string Tonic
 	{
@@ -50,9 +52,12 @@ public class Scale : MonoBehaviour {
 		set;
 	}
 
-	private void PopulateMusicNotes(string tonic)
+	private void PopulateMusicNotes()
 	{
-		int tonicIndex = System.Array.IndexOf(MusicNote.NotesFlat, tonic);
+		StringBuilder tonicWithIndicator = new StringBuilder (Tonic);
+		tonicWithIndicator.Append (Constants.lowerOctIndicator);
+
+		int tonicIndex = System.Array.IndexOf(MusicNote.NotesFlat, tonicWithIndicator.ToString());
 
 		int i;
 		int toneCount = 12;
@@ -93,19 +98,18 @@ public class Scale : MonoBehaviour {
 			}
 
 			solfKey = (ScaleDegree)Enum.Parse(typeof(ScaleDegree), solfKeyStr);
-			//note = (NoteName)Enum.Parse(typeof(NoteName), noteStr);
 
 			solfNoteDict[solfKey] = noteStr;
 		}
 
 		MusicNotes = new List<MusicNote>();
 
-		foreach (var key in solfNoteDict.Keys)
+		foreach (ScaleDegree solf in solfNoteDict.Keys)
 		{
 			//if the scaletype of this scale obj contains the solfege key
-			if (Dict[Type].Contains(key))
+			if (TypeToDegrees[Type].Contains(solf))
 			{
-				MusicNote musicNote = new MusicNote(key, solfNoteDict[key].ToString());
+				MusicNote musicNote = new MusicNote(solf, solfNoteDict[solf].ToString());
 				MusicNotes.Add(musicNote);
 			}
 

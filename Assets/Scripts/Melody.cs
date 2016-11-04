@@ -11,6 +11,9 @@ public class Melody : MonoBehaviour {
 	private List<MusicNote> _notes = new List<MusicNote>();
 	private List<float> _noteBeats = new List<float> ();	//the beats on which the notes are played
 	private int _tempoBPM;
+	private List<AudioClip> _toneClips = new List<AudioClip>();
+
+	public GameObject MelodyGO;
 
 	//note beats of 1 4/4 measure
 	private List<float> POSSBEATS = new List<float>{1f,1.5f,2f,2.5f,3f,3.5f,4f,4.5f};
@@ -67,11 +70,40 @@ public class Melody : MonoBehaviour {
 		set{ _scale=value; }
 	}
 
+
 	//TODO: PLAY THE MELODY BASED ON NOTES, NOTEBEATS, BPM
-	public void Play()
+	public IEnumerator Play()
 	{
-	
+		var origin = new Vector3 (0, 0, 0);
+
+		foreach (var toneClip in _toneClips) 
+		{
+
+			PlayClip (toneClip, origin);
+			yield return new WaitForSeconds (1f);
+		}
+
+		yield return null;
 	}
+
+	//this method created to play the audio clip like AudioSource.PlayClipAtPoint, but now with volume control
+	//of the temporarily created AudioSource game object
+	//http://answers.unity3d.com/questions/316575/adjust-properties-of-audiosource-created-with-play.html
+	private AudioSource PlayClip(AudioClip clip, Vector3 pos)
+	{
+		GameObject tempGO = new GameObject("TempAudio"); // create the temp object
+		tempGO.transform.position = pos; // set its position
+		AudioSource aSource = tempGO.AddComponent<AudioSource>(); // add an audio source
+		aSource.clip = clip; // define the clip
+		// set other aSource properties here, if desired
+		aSource.Play(); // start the sound
+		Destroy(tempGO, clip.length); // destroy object after clip duration
+
+		//aSource.pitch = 1.0f;
+		aSource.volume = 1.0f;
+		return aSource; // return the AudioSource reference
+	}
+
 
 	private void GenerateNoteBeats()
 	{
@@ -111,6 +143,7 @@ public class Melody : MonoBehaviour {
 		for (var i = 0; i < Length; i++)
 		{
 			//for max interval
+			//20% of the time, max interval is 10, otherwise it's 4
 			var randNum = random.Next(100);
 			if (randNum <= 20)
 				maxInterval = 10;
@@ -127,6 +160,13 @@ public class Melody : MonoBehaviour {
 
 			noteIndices.Add(randNoteIndex);
 			Notes.Add(Scale.MusicNotes[randNoteIndex]);
+
+			int octave = 3;
+			if (Notes [i].NameFlat.Contains ("h"))
+				octave++;
+
+			var noteNameGeneral = Notes[i].NameFlat.Substring (0, Notes[i].NameFlat.Length - 1);
+			_toneClips.Add (Resources.Load<AudioClip>(noteNameGeneral+octave));
 
 		}
 	}
