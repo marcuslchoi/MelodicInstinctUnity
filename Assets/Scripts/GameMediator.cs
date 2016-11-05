@@ -67,7 +67,7 @@ public class GameMediator : MonoBehaviour {
 		//user input
 		//var tonic = "C";
 		var melodyLength = 4;
-		var tempo = 120;	//bpm
+		var tempo = 60;	//bpm
 		var measures = 2;
 		var beatsPerMeasure = 4;
 
@@ -111,14 +111,24 @@ public class GameMediator : MonoBehaviour {
 
 	private void ToneOnClick()
 	{
+		float maxBeatDifference = .25f;
 		bool isCorrectBeat = false;
 		float answerBeat = (Time.time - timeBeginAnswer)/currentMelody.TimePerBeat + Constants.beatAdjustment;
 
-		if (Mathf.Abs (answerBeat - currentMelody.NoteBeats [guesses]) < .25f)
+		if (Mathf.Abs (answerBeat - currentMelody.NoteBeats [guesses]) < maxBeatDifference)
 			isCorrectBeat = true;
+
+		var isCorrectNote = false;
+		var solfClicked = PlayToneBtn.solfClicked;
+		var currentSolf = currentMelody.Notes [guesses].Solfege.ToString ();
+
+		if (currentSolf.Contains (solfClicked))
+			isCorrectNote = true;
+
+		print (isCorrectNote+" "+solfClicked);
 		print (isCorrectBeat+"("+answerBeat+")");
 
-		StartCoroutine (EnableAnimatedGO (PlayToneBtn.toneClicked));
+		StartCoroutine (EnableAnimatedGO (PlayToneBtn.solfClicked));
 		guesses++;
 	}
 	

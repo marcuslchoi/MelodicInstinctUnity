@@ -106,30 +106,12 @@ public class Melody : MonoBehaviour {
 		{
 			waitTime = (NoteBeats [i] - Constants.beatAdjustment)*TimePerBeat;
 			yield return new WaitForSeconds (waitTime-previousWaitTime);
-			PlayClip (toneClip, origin);
+			Constants.PlayClip (toneClip, origin);
 			previousWaitTime = waitTime;
 			i++;
 		}
 
 		//yield return null;
-	}
-
-	//this method created to play the audio clip like AudioSource.PlayClipAtPoint, 
-	//but now with volume control of the temporarily created AudioSource game object
-	//http://answers.unity3d.com/questions/316575/adjust-properties-of-audiosource-created-with-play.html
-	private AudioSource PlayClip(AudioClip clip, Vector3 pos)
-	{
-		GameObject tempGO = new GameObject("TempAudio"); // create the temp object
-		tempGO.transform.position = pos; // set its position
-		AudioSource aSource = tempGO.AddComponent<AudioSource>(); // add an audio source
-		aSource.clip = clip; // define the clip
-		// set other aSource properties here, if desired
-		aSource.Play(); // start the sound
-		Destroy(tempGO, clip.length); // destroy object after clip duration
-
-		//aSource.pitch = 1.0f;
-		aSource.volume = 1.0f;
-		return aSource; // return the AudioSource reference
 	}
 
 
@@ -190,11 +172,11 @@ public class Melody : MonoBehaviour {
 			noteIndices.Add(randNoteIndex);
 			Notes.Add(Scale.MusicNotes[randNoteIndex]);
 
-			int octave = 3;
-			if (Notes [i].NameFlat.Contains ("h"))
+			int octave = Constants.lowerOct;
+			if (Notes [i].NameFlat.Contains (Constants.higherOctIndicator))
 				octave++;
 
-			var noteNameGeneral = Notes[i].NameFlat.Substring (0, Notes[i].NameFlat.Length - 1);
+			var noteNameGeneral = Constants.RemoveLast (Notes [i].NameFlat);//Notes[i].NameFlat.Substring (0, Notes[i].NameFlat.Length - 1);
 			_toneClips.Add (Resources.Load<AudioClip>(noteNameGeneral+octave));
 
 		}

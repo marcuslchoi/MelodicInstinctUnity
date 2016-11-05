@@ -8,11 +8,11 @@ public class PlayToneBtn : MonoBehaviour {
 	public MusicNote note;
 	AudioClip audioClip;
 	public Text toneText;
-	public static string toneClicked;
+	public static string solfClicked;
 
 	public void OnClick()
 	{
-		toneClicked = toneText.text;
+		solfClicked = toneText.text;
 
 		AudioSource audioSource = GetComponent<AudioSource> (); // PlayClipAtPoint (audioClip, new Vector3(0,0,0));
 		audioSource.clip = audioClip;
@@ -23,7 +23,8 @@ public class PlayToneBtn : MonoBehaviour {
 	// Use this for initialization
 	public void PopulateFields () {
 
-		audioClip = Resources.Load<AudioClip> (note.NameFlat+"3");
+		var noteNameGeneral = Constants.RemoveLast (note.NameFlat);
+		audioClip = Resources.Load<AudioClip> (noteNameGeneral+Constants.lowerOct);
 		toneText.text = note.Solfege.ToString ();
 
 	}
