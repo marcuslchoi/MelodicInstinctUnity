@@ -17,7 +17,7 @@ public class Answer : MonoBehaviour {
 
 		for (var i = 0; i < QuesMelody.Length; i++)
 		{
-			if (q.Notes[i].NameFlat != a.Notes[i].NameFlat)
+			if (a.Notes[i].NameFlat != q.Notes[i].NameFlat)
 			{
 				isCorrect = false;
 				break;
@@ -32,18 +32,18 @@ public class Answer : MonoBehaviour {
 	public bool IsCorrect
 	{
 		get {return _isCorrect;}
-		set{ _isCorrect = value; }
+		private set{ _isCorrect = value; }
 	}
 
 	public Melody QuesMelody
 	{
 		get{ return _quesMelody; }
-		set{ _quesMelody = value; }
+		private set{ _quesMelody = value; }
 	}
 
 	public Melody AnsMelody
 	{
 		get{ return _ansMelody; }
-		set{ _ansMelody = value; }
+		private set{ _ansMelody = value; }
 	}
 }

@@ -29,6 +29,7 @@ public class GameMediator : MonoBehaviour {
 
 	Dictionary<string,GameObject> SolfToAnimation = new Dictionary<string,GameObject>();
 
+	string tonic = "C";
 	// Use this for initialization
 	void Start () {
 
@@ -37,21 +38,12 @@ public class GameMediator : MonoBehaviour {
 
 		//TODO: INSTANTIATE THE BUTTONS AT CORRECT POSITION EACH TIME TONIC CHANGES
 
-		var tonic = "C";
-		var melodyLength = 6;
-		var tempo = 60;	//bpm
+		//var tonic = "C";
+		//var melodyLength = 6;
+		//var tempo = 60;	//bpm
 
 		myScale = new Scale (tonic, ScaleType.MAJOR);
-		currentMelody = new Melody (melodyLength, myScale, tempo);
-
-		//the beats
-//		foreach (var beat in currentMelody.NoteBeats)
-//			print (beat);
-
-//		foreach (var note in myScale.MusicNotes) {
-//		
-//			print (note.Solfege + " is " + note.NameFlat);
-//		}
+		//currentMelody = new Melody (melodyLength, myScale, tempo);
 
 		var i = 0;
 		foreach (var toneButton in ToneButtonsWhite) 
@@ -65,27 +57,33 @@ public class GameMediator : MonoBehaviour {
 			i++;
 		}
 
-		int measures = 1;
-		int beatsPerMeasure = 4;
-		const int SECONDS_PER_MIN = 60;
-
-		melodyPlaytime = (float)((SECONDS_PER_MIN*beatsPerMeasure*measures) / currentMelody.TempoBPM);
-
 	}
-	float melodyPlaytime;
+
 	public void PlayButtonOnClick()
 	{
 		PlayButton.interactable = false;
+		guesses = 0;
 
-		var tonic = "C";
+		//user input
+		//var tonic = "C";
 		var melodyLength = 4;
-		var tempo = 60;	//bpm
+		var tempo = 120;	//bpm
+		var measures = 2;
+		var beatsPerMeasure = 4;
 
-		myScale = new Scale (tonic, ScaleType.MAJOR);
-		currentMelody = new Melody (melodyLength, myScale, tempo);
+		//myScale = new Scale (tonic, ScaleType.MAJOR);
+		currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
 
-		//StartCoroutine (PlayMelody(melodyPlaytime));
-		StartCoroutine(Wait(melodyPlaytime));
+		//the beats
+		foreach (var beat in currentMelody.NoteBeats)
+			print (beat);
+
+//		foreach (var note in myScale.MusicNotes) {
+//		
+//			print (note.Solfege + " is " + note.NameFlat);
+//		}
+
+		StartCoroutine(Wait(currentMelody.Playtime));
 	
 		StartCoroutine (currentMelody.Play ());
 	}
@@ -99,30 +97,12 @@ public class GameMediator : MonoBehaviour {
 	}
 
 	float timeBeginAnswer;
-	/*
-	IEnumerator PlayMelody(float melodyPlaytime)
-	{
-		AudioSource audioSource = GetComponent<AudioSource> ();
-		foreach (var toneClip in toneClips) 
-		{
-			//currentToneClip = Resources.Load<AudioClip> (note.NameFlat + "3");
-			audioSource.clip = toneClip;
-			audioSource.Play ();
-			yield return new WaitForSeconds (1f);
-		}
-		
-		//yield return new WaitForSeconds (melodyPlaytime);
 
-		timeBeginAnswer = Time.time;
-		PlayButton.interactable = true;
-	}
-	*/
-
-	IEnumerator AnimateSolfege(string solfege)
+	IEnumerator EnableAnimatedGO(string solfege)
 	{
-		print ("ANIMATING "+solfege);
+		//print ("ENABLING "+solfege);
 		if (solfege == "DO") {
-			//animate here
+			//gameObject.setenabled here
 		}
 
 		yield return null;
@@ -131,11 +111,14 @@ public class GameMediator : MonoBehaviour {
 
 	private void ToneOnClick()
 	{
-		//TODO: ADJUST ANSWERBEAT BASED ON TEMPO
-		float answerBeat = Time.time - timeBeginAnswer + 1f;
-		print (answerBeat);
+		bool isCorrectBeat = false;
+		float answerBeat = (Time.time - timeBeginAnswer)/currentMelody.TimePerBeat + Constants.beatAdjustment;
 
-		StartCoroutine (AnimateSolfege (PlayToneBtn.toneClicked));
+		if (Mathf.Abs (answerBeat - currentMelody.NoteBeats [guesses]) < .25f)
+			isCorrectBeat = true;
+		print (isCorrectBeat+"("+answerBeat+")");
+
+		StartCoroutine (EnableAnimatedGO (PlayToneBtn.toneClicked));
 		guesses++;
 	}
 	

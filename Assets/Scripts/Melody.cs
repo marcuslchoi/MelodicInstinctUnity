@@ -13,17 +13,18 @@ public class Melody : MonoBehaviour {
 	private int _tempoBPM;
 	private List<AudioClip> _toneClips = new List<AudioClip>();
 
-	public GameObject MelodyGO;
 
 	//note beats of 1 4/4 measure
 	private List<float> POSSBEATS = new List<float>{1f,1.5f,2f,2.5f,3f,3.5f,4f,4.5f};
 
 
-	public Melody(int length, Scale scale, int tempoBPM)
+	public Melody(int length, Scale scale, int tempoBPM, int measures, int beatsPerMeasure)
 	{
 		Length = length;
 		Scale = scale;
 		TempoBPM = tempoBPM;
+		Measures = measures;
+		BeatsPerMeasure = beatsPerMeasure;
 
 		GenerateMusicNotes();
 		GenerateNoteBeats ();
@@ -40,10 +41,31 @@ public class Melody : MonoBehaviour {
 		//NoteBeats = noteBeats;
 	}
 
+	public int Measures {
+		get;
+		private set;
+	}
+
+	public int BeatsPerMeasure {
+		get;
+		private set;
+	}
+
 	public int TempoBPM 
 	{
 		get{ return _tempoBPM; }
 		private set{ _tempoBPM = value; }
+	}
+
+	public float Playtime {
+		get;
+		private set;
+	}
+
+	public float TimePerBeat {
+		
+		get{ return (float)Constants.SECONDS_PER_MIN / (float)TempoBPM; }
+
 	}
 
 	public List<float> NoteBeats 
@@ -76,18 +98,24 @@ public class Melody : MonoBehaviour {
 	{
 		var origin = new Vector3 (0, 0, 0);
 
+		float waitTime;
+		float previousWaitTime = 0f;
+
+		var i = 0;
 		foreach (var toneClip in _toneClips) 
 		{
-
+			waitTime = (NoteBeats [i] - Constants.beatAdjustment)*TimePerBeat;
+			yield return new WaitForSeconds (waitTime-previousWaitTime);
 			PlayClip (toneClip, origin);
-			yield return new WaitForSeconds (1f);
+			previousWaitTime = waitTime;
+			i++;
 		}
 
-		yield return null;
+		//yield return null;
 	}
 
-	//this method created to play the audio clip like AudioSource.PlayClipAtPoint, but now with volume control
-	//of the temporarily created AudioSource game object
+	//this method created to play the audio clip like AudioSource.PlayClipAtPoint, 
+	//but now with volume control of the temporarily created AudioSource game object
 	//http://answers.unity3d.com/questions/316575/adjust-properties-of-audiosource-created-with-play.html
 	private AudioSource PlayClip(AudioClip clip, Vector3 pos)
 	{
@@ -129,6 +157,7 @@ public class Melody : MonoBehaviour {
 		foreach (var beatIndex in beatIndices)
 			NoteBeats.Add (POSSBEATS [beatIndex]);
 
+		Playtime = TimePerBeat*(float)BeatsPerMeasure*(float)Measures;
 	}
 
 	private void GenerateMusicNotes()
