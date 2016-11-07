@@ -18,15 +18,16 @@ public class GameMediator : MonoBehaviour
 	public static Melody currentMelody;
 	Scale myScale;
 
-	bool displayWrongText;
-
-	bool displayCorrectText;
+//	bool displayWrongText;
+//
+//	bool displayCorrectText;
 
 	public List<GameObject> Solfege3Ds;
 
 	public List<Button> ToneButtonsBlack;
 
 	public List<Button> ToneButtonsWhite;
+	public Text WrongText;
 
 	Dictionary<string,GameObject> SolfToAnimation = new Dictionary<string,GameObject>();
 
@@ -64,7 +65,7 @@ public class GameMediator : MonoBehaviour
 
 	public void PlayButtonOnClick()
 	{
-
+		//WrongText.gameObject.SetActive (false);
 		PlayButton.interactable = false;
 		guesses = 0;
 
@@ -121,7 +122,30 @@ public class GameMediator : MonoBehaviour
 
 	private void ToneOnClick()
 	{
-		
+		//only display wrong if within the guesses range of the melody
+		if (guesses <= currentMelody.Notes.Count) 
+		{
+
+			if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat))
+				StartCoroutine (FlashWrong());
+			else
+				WrongText.gameObject.SetActive (false);
+
+		}
+	}
+
+	IEnumerator FlashWrong()
+	{
+		float flashOffTime = 0.05f;
+		//flash off
+		WrongText.gameObject.SetActive (false);
+		yield return new WaitForSeconds (flashOffTime);
+
+		float flashOnTime = 2f;
+		//flash on
+		WrongText.gameObject.SetActive (true);
+		yield return new WaitForSeconds (flashOnTime);
+		WrongText.gameObject.SetActive (false);
 	}
 	
 	// Update is called once per frame

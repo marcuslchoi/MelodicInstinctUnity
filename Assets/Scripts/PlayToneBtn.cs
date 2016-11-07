@@ -12,8 +12,13 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 	public Text toneText;
 	public static string solfClicked;
 
+	public static bool isCorrectNote;
+	public static bool isCorrectBeat;
+
 	public void OnPointerDown(PointerEventData data)
 	{
+		//GameMediator.WrongText.gameObject.SetActive (false);
+
 		solfClicked = toneText.text;
 		AudioSource audioSource = GetComponent<AudioSource> (); // PlayClipAtPoint (audioClip, new Vector3(0,0,0));
 		audioSource.clip = audioClip;
@@ -27,14 +32,14 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 
 			var timeBeginAnswer = GameMediator.timeBeginAnswer;
 
-			bool isCorrectBeat = false;
+			isCorrectBeat = false;
 
 			float answerBeat = (Time.time - timeBeginAnswer) / melody.TimePerBeat + Constants.beatAdjustment;
 
 			if (Mathf.Abs (answerBeat - melody.NoteBeats [guesses]) < Constants.maxBeatDifference)
 				isCorrectBeat = true;
 
-			var isCorrectNote = false;
+			isCorrectNote = false;
 
 			var currentSolf = melody.Notes [guesses].Solfege.ToString ();
 
@@ -43,6 +48,9 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 
 			print (isCorrectNote + " " + solfClicked);
 			print (isCorrectBeat + "(" + answerBeat + ")");
+
+//			if (!(isCorrectBeat && isCorrectNote))
+//				GameMediator.WrongText.gameObject.SetActive (true);
 		}
 
 		//StartCoroutine (EnableAnimatedGO (PlayToneBtn.solfClicked));
