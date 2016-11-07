@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 //this is the view/controller
-public class GameMediator : MonoBehaviour {
+public class GameMediator : MonoBehaviour
+{
 
 	public Button PlayButton;
 
@@ -33,7 +34,7 @@ public class GameMediator : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		foreach(var tonebtn in ToneButtonsWhite)
+		foreach (var tonebtn in ToneButtonsWhite)
 			tonebtn.onClick.AddListener (ToneOnClick);
 
 		//TODO: INSTANTIATE THE BUTTONS AT CORRECT POSITION EACH TIME TONIC CHANGES
@@ -57,6 +58,8 @@ public class GameMediator : MonoBehaviour {
 			i++;
 		}
 
+		InvokeRepeating ("PlayButtonOnClick", 1f, 8f);
+
 	}
 
 	public void PlayButtonOnClick()
@@ -67,12 +70,17 @@ public class GameMediator : MonoBehaviour {
 		//user input
 		//var tonic = "C";
 		var melodyLength = 4;
-		var tempo = 60;	//bpm
+		var tempo = 120;	//bpm
 		var measures = 2;
 		var beatsPerMeasure = 4;
 
+		AudioSource aSource = GetComponent<AudioSource>();
+		aSource.pitch = (float)tempo / 60f;
+		aSource.Play ();
+
 		//myScale = new Scale (tonic, ScaleType.MAJOR);
 		currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
+
 
 		//the beats
 		foreach (var beat in currentMelody.NoteBeats)
