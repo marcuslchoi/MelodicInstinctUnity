@@ -27,11 +27,17 @@ public class GameMediator : MonoBehaviour
 	public List<Button> ToneButtonsBlack;
 
 	public List<Button> ToneButtonsWhite;
-	public Text WrongText;
+	public Text Feedback;
+	public Text StatsText;
 
 	Dictionary<string,GameObject> SolfToAnimation = new Dictionary<string,GameObject>();
 
 	string tonic = "C";
+	int tempo = 60;
+	int melodyLength = 4;
+	int measures = 2;
+	int beatsPerMeasure = 4;
+
 	// Use this for initialization
 	void Start () {
 
@@ -59,25 +65,25 @@ public class GameMediator : MonoBehaviour
 			i++;
 		}
 
-		InvokeRepeating ("PlayButtonOnClick", 1f, 8f);
+		InvokeRepeating ("PlayButtonOnClick", 1f, 16f);
 
 	}
 
 	public void PlayButtonOnClick()
 	{
-		//WrongText.gameObject.SetActive (false);
+		Feedback.text = "";
+		melodiesPlayed++;
+		isCorrectMelody = true;
+
 		PlayButton.interactable = false;
 		guesses = 0;
 
 		//user input
 		//var tonic = "C";
-		var melodyLength = 4;
-		var tempo = 120;	//bpm
-		var measures = 2;
-		var beatsPerMeasure = 4;
+
 
 		AudioSource aSource = GetComponent<AudioSource>();
-		aSource.pitch = (float)tempo / 60f;
+		aSource.pitch = (float)tempo / Constants.SECONDS_PER_MIN;
 		aSource.Play ();
 
 		//myScale = new Scale (tonic, ScaleType.MAJOR);
@@ -120,16 +126,37 @@ public class GameMediator : MonoBehaviour
 	
 	}
 
+	int melodiesPlayed = 0;
+	int correctMelodies = 0;
+	bool isCorrectMelody;
 	private void ToneOnClick()
 	{
+		
 		//only display wrong if within the guesses range of the melody
 		if (guesses <= currentMelody.Notes.Count) 
 		{
 
-			if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat))
-				StartCoroutine (FlashWrong());
-			else
-				WrongText.gameObject.SetActive (false);
+			if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat)) 
+			{
+				isCorrectMelody = false;
+				StartCoroutine (FlashWrong ());
+			
+			} 
+			else 
+			{
+				Feedback.text = "";
+			}
+
+			if (guesses == currentMelody.Notes.Count) 
+			{	
+				if (isCorrectMelody) 
+				{
+					correctMelodies++;
+					Feedback.text = "CORRECT!";
+				}
+				
+				StatsText.text = correctMelodies +"/"+ melodiesPlayed;
+			}
 
 		}
 	}
@@ -138,14 +165,14 @@ public class GameMediator : MonoBehaviour
 	{
 		float flashOffTime = 0.05f;
 		//flash off
-		WrongText.gameObject.SetActive (false);
+		Feedback.text="";
 		yield return new WaitForSeconds (flashOffTime);
 
 		float flashOnTime = 2f;
 		//flash on
-		WrongText.gameObject.SetActive (true);
+		Feedback.text="WRONG";
 		yield return new WaitForSeconds (flashOnTime);
-		WrongText.gameObject.SetActive (false);
+		Feedback.text = "";
 	}
 	
 	// Update is called once per frame
