@@ -19,6 +19,36 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 		audioSource.clip = audioClip;
 		audioSource.Play ();
 
+		var melody = GameMediator.currentMelody;
+		var guesses = GameMediator.guesses;
+
+		if (guesses < melody.Notes.Count) 
+		{
+
+			var timeBeginAnswer = GameMediator.timeBeginAnswer;
+
+			bool isCorrectBeat = false;
+
+			float answerBeat = (Time.time - timeBeginAnswer) / melody.TimePerBeat + Constants.beatAdjustment;
+
+			if (Mathf.Abs (answerBeat - melody.NoteBeats [guesses]) < Constants.maxBeatDifference)
+				isCorrectBeat = true;
+
+			var isCorrectNote = false;
+
+			var currentSolf = melody.Notes [guesses].Solfege.ToString ();
+
+			if (currentSolf.Contains (solfClicked))
+				isCorrectNote = true;
+
+			print (isCorrectNote + " " + solfClicked);
+			print (isCorrectBeat + "(" + answerBeat + ")");
+		}
+
+		//StartCoroutine (EnableAnimatedGO (PlayToneBtn.solfClicked));
+
+		GameMediator.guesses++;
+
 	}
 /*
 	public void OnClick()

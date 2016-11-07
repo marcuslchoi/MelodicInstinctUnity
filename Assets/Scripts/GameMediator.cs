@@ -13,9 +13,9 @@ public class GameMediator : MonoBehaviour
 
 	MusicNote currentNote;
 
-	public int guesses;
+	public static int guesses;
 
-	Melody currentMelody;
+	public static Melody currentMelody;
 	Scale myScale;
 
 	bool displayWrongText;
@@ -64,6 +64,7 @@ public class GameMediator : MonoBehaviour
 
 	public void PlayButtonOnClick()
 	{
+
 		PlayButton.interactable = false;
 		guesses = 0;
 
@@ -81,6 +82,7 @@ public class GameMediator : MonoBehaviour
 		//myScale = new Scale (tonic, ScaleType.MAJOR);
 		currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
 
+		timeBeginAnswer = Time.time + currentMelody.Playtime;
 
 		//the beats
 		foreach (var beat in currentMelody.NoteBeats)
@@ -100,11 +102,11 @@ public class GameMediator : MonoBehaviour
 	{
 	
 		yield return new WaitForSeconds (melodyPlaytime);
-		timeBeginAnswer = Time.time;
+
 		PlayButton.interactable = true;
 	}
 
-	float timeBeginAnswer;
+	public static float timeBeginAnswer;
 
 	IEnumerator EnableAnimatedGO(string solfege)
 	{
@@ -119,25 +121,7 @@ public class GameMediator : MonoBehaviour
 
 	private void ToneOnClick()
 	{
-		float maxBeatDifference = .25f;
-		bool isCorrectBeat = false;
-		float answerBeat = (Time.time - timeBeginAnswer)/currentMelody.TimePerBeat + Constants.beatAdjustment;
-
-		if (Mathf.Abs (answerBeat - currentMelody.NoteBeats [guesses]) < maxBeatDifference)
-			isCorrectBeat = true;
-
-		var isCorrectNote = false;
-		var solfClicked = PlayToneBtn.solfClicked;
-		var currentSolf = currentMelody.Notes [guesses].Solfege.ToString ();
-
-		if (currentSolf.Contains (solfClicked))
-			isCorrectNote = true;
-
-		print (isCorrectNote+" "+solfClicked);
-		print (isCorrectBeat+"("+answerBeat+")");
-
-		StartCoroutine (EnableAnimatedGO (PlayToneBtn.solfClicked));
-		guesses++;
+		
 	}
 	
 	// Update is called once per frame

@@ -12,6 +12,8 @@ public class Constants : MonoBehaviour {
 
 	public static float beatAdjustment = 1f; //adjust for first beat is 1, not 0
 
+	public static float maxBeatDifference = .25f;
+
 	//this method created to play the audio clip like AudioSource.PlayClipAtPoint, 
 	//but now with volume control of the temporarily created AudioSource game object
 	//http://answers.unity3d.com/questions/316575/adjust-properties-of-audiosource-created-with-play.html
