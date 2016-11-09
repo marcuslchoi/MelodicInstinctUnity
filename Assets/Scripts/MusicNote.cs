@@ -8,6 +8,7 @@ public class MusicNote : MonoBehaviour {
 	private static string[] _notesSharp = new string[] { "Cl", "C#l", "Dl", "D#l", "El", "Fl", "F#l", "Gl", "G#l", "Al", "A#l", "Bl","Ch", "C#h", "Dh", "D#h", "Eh", "Fh", "F#h", "Gh", "G#h", "Ah", "A#h", "Bh" };
 
 	private static Dictionary<string,string> _flatToSharp = new Dictionary<string,string>();
+	private static Dictionary<string, List<char>> _tonicToKeyLayout = new Dictionary<string,List<char>> ();
 
 	private string _nameFlat;
 	private string _nameSharp;
@@ -16,23 +17,23 @@ public class MusicNote : MonoBehaviour {
 	//system calls this
 	static MusicNote()
 	{
+		//TODO: THIS IS REPEATED CODE
+		List<string> notes = new List<string>{ "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
+		List<char> keyLayout = new List<char>{ 'W', 'B', 'W', 'B', 'W', 'W', 'B', 'W', 'B', 'W', 'B', 'W' };
+
+		//initialize _tonicToKeyLayout dictionary
+		for(var i = 0;i < notes.Count; i++)
+		{
+			_tonicToKeyLayout.Add (notes [i], keyLayout);
+
+			keyLayout.Add (keyLayout [0]);
+			keyLayout.RemoveAt (0);
+		}
+
 		//initialize flatToSharp static dictionary
 		for (var i = 0; i < NotesFlat.Length; i++)
-			FlatToSharp [NotesFlat [i]] = NotesSharp [i];
+			_flatToSharp [NotesFlat [i]] = NotesSharp [i];
 	
-	}
-
-	public static Dictionary<string,string> FlatToSharp 
-	{
-		get{ return _flatToSharp; }
-	}
-	public static string[] NotesFlat 
-	{
-		get{ return _notesFlat; }
-	}
-	public static string[] NotesSharp 
-	{
-		get{ return _notesSharp; }
 	}
 
 	public MusicNote(ScaleDegree solfege, string nameFlat)
@@ -46,6 +47,26 @@ public class MusicNote : MonoBehaviour {
 	public MusicNote(string nameFlat)
 	{
 		NameFlat = nameFlat;
+	}
+
+	public static Dictionary<string,string> FlatToSharp 
+	{
+		get{ return new Dictionary<string, string>(_flatToSharp); }
+	}
+
+	public static Dictionary<string,List<char>> TonicToKeyLayout 
+	{
+		get{ return new Dictionary<string, List<char>>(_tonicToKeyLayout); }
+	}
+
+
+	public static string[] NotesFlat 
+	{
+		get{ return _notesFlat; }
+	}
+	public static string[] NotesSharp 
+	{
+		get{ return _notesSharp; }
 	}
 
 	public string NameFlat

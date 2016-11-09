@@ -12,6 +12,9 @@ public class Melody : MonoBehaviour {
 	private List<float> _noteBeats = new List<float> ();	//the beats on which the notes are played
 	private int _tempoBPM;
 	private List<AudioClip> _toneClips = new List<AudioClip>();
+	private int _bigInterval = 10;
+	private int _smallInterval = 4;
+	private int _percentBigInterval = 20;
 
 
 	//note beats of 1 4/4 measure
@@ -41,6 +44,22 @@ public class Melody : MonoBehaviour {
 		//NoteBeats = noteBeats;
 	}
 
+	public int BigInterval 
+	{
+		get{ return _bigInterval; }
+		set{ _bigInterval = value; }
+	}
+	public int SmallInterval 
+	{
+		get{ return _smallInterval; }
+		set{ _smallInterval = value; }
+	}
+	public int PercentBigInterval 
+	{
+		get{ return _percentBigInterval; }
+		set{ _percentBigInterval = value; }
+	}
+
 	public int Measures {
 		get;
 		private set;
@@ -57,12 +76,14 @@ public class Melody : MonoBehaviour {
 		private set{ _tempoBPM = value; }
 	}
 
-	public float Playtime {
+	public float Playtime 
+	{
 		get;
 		private set;
 	}
 
-	public float TimePerBeat {
+	public float TimePerBeat 
+	{
 		
 		get{ return (float)Constants.SECONDS_PER_MIN / (float)TempoBPM; }
 
@@ -146,20 +167,22 @@ public class Melody : MonoBehaviour {
 	{
 		var random = new System.Random();
 		int maxInterval;
+
 		var noteIndices = new List<int>();
 
 		Notes = new List<MusicNote>();
+		int percentWhole = 100;
 
 		//prevents intervals larger than maxInterval
 		for (var i = 0; i < Length; i++)
 		{
 			//for max interval
-			//20% of the time, max interval is 10, otherwise it's 4
-			var randNum = random.Next(100);
-			if (randNum <= 20)
-				maxInterval = 10;
+			//PercentBigInterval of the time, max interval is BigInterval, otherwise it's SmallInterval
+			var randNum = random.Next(percentWhole);
+			if (randNum <= PercentBigInterval)
+				maxInterval = BigInterval;
 			else
-				maxInterval = 4;
+				maxInterval = SmallInterval;
 
 			//generate the random note indices
 			int randNoteIndex;
@@ -176,7 +199,7 @@ public class Melody : MonoBehaviour {
 			if (Notes [i].NameFlat.Contains (Constants.higherOctIndicator))
 				octave++;
 
-			var noteNameGeneral = Constants.RemoveLast (Notes [i].NameFlat);//Notes[i].NameFlat.Substring (0, Notes[i].NameFlat.Length - 1);
+			var noteNameGeneral = Constants.RemoveLast (Notes [i].NameFlat);
 			_toneClips.Add (Resources.Load<AudioClip>(noteNameGeneral+octave));
 
 		}
