@@ -24,9 +24,7 @@ public class GameMediator : MonoBehaviour
 
 	public List<GameObject> Solfege3Ds;
 
-	public List<Button> ToneButtonsBlack;
-
-	public List<Button> ToneButtonsWhite;
+	public List<Button> ToneButtons;
 	public Text Feedback;
 	public Text StatsText;
 
@@ -41,7 +39,7 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () {
 
-		foreach (var tonebtn in ToneButtonsWhite)
+		foreach (var tonebtn in ToneButtons)
 			tonebtn.onClick.AddListener (ToneOnClick);
 
 		//TODO: INSTANTIATE THE BUTTONS AT CORRECT POSITION EACH TIME TONIC CHANGES
@@ -54,7 +52,7 @@ public class GameMediator : MonoBehaviour
 		//currentMelody = new Melody (melodyLength, myScale, tempo);
 
 		var i = 0;
-		foreach (var toneButton in ToneButtonsWhite) 
+		foreach (var toneButton in ToneButtons) 
 		{
 			var playToneBtn = toneButton.gameObject.GetComponent<PlayToneBtn> ();
 			var musicNote = myScale.MusicNotes [i];

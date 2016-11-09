@@ -107,7 +107,7 @@ public class Scale : MonoBehaviour {
 		foreach (ScaleDegree solf in solfNoteDict.Keys)
 		{
 			//if the scaletype of this scale obj contains the solfege key
-			if (TypeToDegrees[Type].Contains(solf))
+			if (true)//(TypeToDegrees[Type].Contains(solf))
 			{
 				MusicNote musicNote = new MusicNote(solf, solfNoteDict[solf].ToString());
 				MusicNotes.Add(musicNote);

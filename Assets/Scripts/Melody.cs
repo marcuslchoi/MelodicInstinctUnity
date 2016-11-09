@@ -24,7 +24,7 @@ public class Melody : MonoBehaviour {
 	public Melody(int length, Scale scale, int tempoBPM, int measures, int beatsPerMeasure)
 	{
 		Length = length;
-		Scale = scale;
+		AllNotesScale = scale;
 		TempoBPM = tempoBPM;
 		Measures = measures;
 		BeatsPerMeasure = beatsPerMeasure;
@@ -107,7 +107,7 @@ public class Melody : MonoBehaviour {
 		private set{ _notes = value; }
 	}
 
-	public Scale Scale
+	public Scale AllNotesScale
 	{
 		get{ return _scale; }
 		set{ _scale=value; }
@@ -173,6 +173,23 @@ public class Melody : MonoBehaviour {
 		Notes = new List<MusicNote>();
 		int percentWhole = 100;
 
+
+		//if (TypeToDegrees[Type].Contains(solf))
+		var possMusicNotes = new List<MusicNote>();
+
+		var scaleTypeChosen = AllNotesScale.Type;
+		var scaleDegreesChosen = Scale.TypeToDegrees [scaleTypeChosen];
+		var allMusicNotes = AllNotesScale.MusicNotes;
+
+		for(var j = 0; j < allMusicNotes.Count; j++)
+		{
+			var solfege = allMusicNotes [j].Solfege;
+
+			if(scaleDegreesChosen.Contains(solfege))
+				possMusicNotes.Add(allMusicNotes[j]);
+
+		}
+
 		//prevents intervals larger than maxInterval
 		for (var i = 0; i < Length; i++)
 		{
@@ -188,13 +205,14 @@ public class Melody : MonoBehaviour {
 			int randNoteIndex;
 			do
 			{
-				randNoteIndex = random.Next(Scale.MusicNotes.Count);
+				randNoteIndex = random.Next(possMusicNotes.Count);
 			}
 			while (i > 0 && Math.Abs(noteIndices[i - 1] - randNoteIndex) >= maxInterval);
 
 			noteIndices.Add(randNoteIndex);
-			Notes.Add(Scale.MusicNotes[randNoteIndex]);
+			Notes.Add(possMusicNotes[randNoteIndex]);
 
+			//append octave number to general note name to get the audio clip
 			int octave = Constants.lowerOct;
 			if (Notes [i].NameFlat.Contains (Constants.higherOctIndicator))
 				octave++;
