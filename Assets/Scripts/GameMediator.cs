@@ -8,6 +8,7 @@ public class GameMediator : MonoBehaviour
 {
 
 	public Button PlayButton;
+	public Camera CameraCanvas;
 
 	public GameObject Solfege3D;
 
@@ -30,40 +31,71 @@ public class GameMediator : MonoBehaviour
 
 	Dictionary<string,GameObject> SolfToAnimation = new Dictionary<string,GameObject>();
 
-	string tonic = "C";
-	int tempo = 60;
+	string tonic = "Eb";
+	int tempo = 120;
 	int melodyLength = 4;
 	int measures = 2;
 	int beatsPerMeasure = 4;
 
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
+		//viewport coordinates
+		float maxX = 1f;
+		float distToCamera = transform.position.z - CameraCanvas.transform.position.z;
+		float buttonHeight = .1f;
+		int numberHalves;
 
-		foreach (var tonebtn in ToneButtons)
-			tonebtn.onClick.AddListener (ToneOnClick);
+		//c and f have different spacing
+		if (tonic == "C" || tonic == "F")
+			numberHalves = 14;
+		else
+			numberHalves = 15;
 
-		//TODO: INSTANTIATE THE BUTTONS AT CORRECT POSITION EACH TIME TONIC CHANGES
+		float halfKey = maxX/(float)numberHalves;
+		float distToLeft = 0; //+padding
+		float distToBottom;
 
-		//var tonic = "C";
-		//var melodyLength = 6;
-		//var tempo = 60;	//bpm
+		//Vector3 seat0 = View.CameraCardsSeatsChips.ViewportToWorldPoint (new Vector3 (middle,distToBottom,distToCamera));
 
 		myScale = new Scale (tonic, ScaleType.MAJOR);
 		//currentMelody = new Melody (melodyLength, myScale, tempo);
 
-		var i = 0;
-		foreach (var toneButton in ToneButtons) 
+		char previousKeyColor=' ';
+		for (var i = 0; i < ToneButtons.Count; i++) 
 		{
-			var playToneBtn = toneButton.gameObject.GetComponent<PlayToneBtn> ();
-			var musicNote = myScale.MusicNotes [i];
+			ToneButtons [i].onClick.AddListener (ToneOnClick);
+			var playToneBtn = ToneButtons[i].gameObject.GetComponent<PlayToneBtn> ();
+			var musicNote = myScale.MusicNotes [i + myScale.TonicIndex];
+			char keyColor = MusicNote.TonicToKeyLayout [tonic] [i];
+			print (tonic+" "+keyColor);
+
+			if (keyColor == 'W') 
+			{
+				distToBottom = buttonHeight * 0.5f;
+			} 
+			else 
+			{
+				distToBottom = buttonHeight * 1.5f;
+				playToneBtn.keyImage.overrideSprite = Resources.Load<Sprite> ("box");
+				playToneBtn.toneText.color = Color.white;
+			}
 
 			playToneBtn.note = musicNote;
 			playToneBtn.PopulateFields ();
 
-			i++;
+			if (keyColor == previousKeyColor && keyColor == 'W')
+				distToLeft += 2f * halfKey;
+			else
+				distToLeft += halfKey;
+
+			ToneButtons [i].transform.position = CameraCanvas.ViewportToWorldPoint (new Vector3 (distToLeft, distToBottom, distToCamera));
+
+			previousKeyColor = keyColor;
 		}
 
-		InvokeRepeating ("PlayButtonOnClick", 1f, 16f);
+		//16f should be melody playtime
+		InvokeRepeating ("PlayButtonOnClick", 1f, 8f);
 
 	}
 
@@ -75,10 +107,6 @@ public class GameMediator : MonoBehaviour
 
 		PlayButton.interactable = false;
 		guesses = 0;
-
-		//user input
-		//var tonic = "C";
-
 
 		AudioSource aSource = GetComponent<AudioSource>();
 		aSource.pitch = (float)tempo / Constants.SECONDS_PER_MIN;

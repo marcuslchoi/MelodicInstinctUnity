@@ -24,7 +24,7 @@ public class MusicNote : MonoBehaviour {
 		//initialize _tonicToKeyLayout dictionary
 		for(var i = 0;i < notes.Count; i++)
 		{
-			_tonicToKeyLayout.Add (notes [i], keyLayout);
+			_tonicToKeyLayout.Add (notes [i], new List<char>(keyLayout));
 
 			keyLayout.Add (keyLayout [0]);
 			keyLayout.RemoveAt (0);

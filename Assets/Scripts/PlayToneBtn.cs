@@ -11,14 +11,13 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 	AudioClip audioClip;
 	public Text toneText;
 	public static string solfClicked;
+	public Image keyImage;
 
 	public static bool isCorrectNote;
 	public static bool isCorrectBeat;
 
 	public void OnPointerDown(PointerEventData data)
 	{
-		//GameMediator.WrongText.gameObject.SetActive (false);
-
 		solfClicked = toneText.text;
 		AudioSource audioSource = GetComponent<AudioSource> (); // PlayClipAtPoint (audioClip, new Vector3(0,0,0));
 		audioSource.clip = audioClip;
@@ -58,19 +57,9 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 		GameMediator.guesses++;
 
 	}
-/*
-	public void OnClick()
-	{
-		solfClicked = toneText.text;
-
-		AudioSource audioSource = GetComponent<AudioSource> (); // PlayClipAtPoint (audioClip, new Vector3(0,0,0));
-		audioSource.clip = audioClip;
-		audioSource.Play ();
-
-	}
-*/
 
 	// Use this for initialization
+	//TODO: CALL THIS PRIVATELY??
 	public void PopulateFields () {
 
 		var noteNameGeneral = Constants.RemoveLast (note.NameFlat);

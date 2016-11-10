@@ -27,6 +27,7 @@ public class Scale : MonoBehaviour {
 	//END STATICS
 
 	private string _tonic;
+	private int _tonicIndex;
 
 	public Scale(string tonic, ScaleType type)
 	{
@@ -38,6 +39,11 @@ public class Scale : MonoBehaviour {
 	{
 		get{ return _tonic; }
 		set{ _tonic = value; }
+	}
+	public int TonicIndex
+	{
+		get{ return _tonicIndex; }
+		private set{ _tonicIndex = value; }
 	}
 
 	public List<MusicNote> MusicNotes
@@ -57,7 +63,7 @@ public class Scale : MonoBehaviour {
 		StringBuilder tonicWithIndicator = new StringBuilder (Tonic);
 		tonicWithIndicator.Append (Constants.lowerOctIndicator);
 
-		int tonicIndex = System.Array.IndexOf(MusicNote.NotesFlat, tonicWithIndicator.ToString());
+		TonicIndex = System.Array.IndexOf(MusicNote.NotesFlat, tonicWithIndicator.ToString());
 
 		int i;
 		int toneCount = 12;
@@ -70,10 +76,10 @@ public class Scale : MonoBehaviour {
 
 		//ie, do = "Bb"
 		//these are the notes below the root
-		for (i = tonicIndex; i > 0; i--)
+		for (i = TonicIndex; i > 0; i--)
 		{
 			solfKeyStr = solfegeArray[toneCount - i];
-			noteStr = MusicNote.NotesFlat[tonicIndex - i];
+			noteStr = MusicNote.NotesFlat[TonicIndex - i];
 
 			solfKey = (ScaleDegree)Enum.Parse(typeof(ScaleDegree), solfKeyStr);
 			//note = (NoteName)Enum.Parse(typeof(NoteName), noteStr);
@@ -82,18 +88,18 @@ public class Scale : MonoBehaviour {
 		}
 
 		//starts at root index to make sure root is lower 'DO'
-		for (i = tonicIndex; i < solfegeArray.Length; i++)
+		for (i = TonicIndex; i < solfegeArray.Length; i++)
 		{
 			noteStr = MusicNote.NotesFlat[i];
 
-			if (i >= tonicIndex && i < toneCount || i >= toneCount + tonicIndex)
+			if (i >= TonicIndex && i < toneCount || i >= toneCount + TonicIndex)
 			{
-				solfKeyStr = solfegeArray[i - tonicIndex];
+				solfKeyStr = solfegeArray[i - TonicIndex];
 
 			}
 			else //if (i >= toneCount && i < toneCount + tonicIndex)
 			{
-				solfKeyStr = solfegeArray[i - tonicIndex + toneCount];
+				solfKeyStr = solfegeArray[i - TonicIndex + toneCount];
 
 			}
 
@@ -104,6 +110,7 @@ public class Scale : MonoBehaviour {
 
 		MusicNotes = new List<MusicNote>();
 
+		//this now generates all tones and puts them in dictionary (not just for specified scale)  
 		foreach (ScaleDegree solf in solfNoteDict.Keys)
 		{
 			//if the scaletype of this scale obj contains the solfege key
