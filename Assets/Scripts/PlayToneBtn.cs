@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(AudioSource))]
+//[RequireComponent(typeof(AudioSource))]
 public class PlayToneBtn : MonoBehaviour,IPointerDownHandler 
 {
 
@@ -16,12 +16,14 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 	public static bool isCorrectNote;
 	public static bool isCorrectBeat;
 
+	AudioSource audioSource;
+
 	public void OnPointerDown(PointerEventData data)
 	{
 		solfClicked = toneText.text;
-		AudioSource audioSource = GetComponent<AudioSource> (); // PlayClipAtPoint (audioClip, new Vector3(0,0,0));
-		audioSource.clip = audioClip;
-		audioSource.Play ();
+
+		//audioSource.Play ();
+		Constants.PlayClip (audioClip, Constants.origin);
 
 		var melody = GameMediator.currentMelody;
 		var guesses = GameMediator.guesses;
@@ -62,8 +64,10 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 	//TODO: CALL THIS PRIVATELY??
 	public void PopulateFields () {
 
+		//audioSource = GetComponent<AudioSource> ();
 		var noteNameGeneral = Constants.RemoveLast (note.NameFlat);
 		audioClip = Resources.Load<AudioClip> (noteNameGeneral+Constants.lowerOct);
+		//audioSource.clip = audioClip;
 		toneText.text = note.Solfege.ToString ();
 
 	}

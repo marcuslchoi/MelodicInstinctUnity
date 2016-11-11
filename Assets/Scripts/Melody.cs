@@ -117,8 +117,6 @@ public class Melody : MonoBehaviour {
 	//TODO: PLAY THE MELODY BASED ON NOTES, NOTEBEATS, BPM
 	public IEnumerator Play()
 	{
-		var origin = new Vector3 (0, 0, 0);
-
 		float waitTime;
 		float previousWaitTime = 0f;
 
@@ -127,7 +125,7 @@ public class Melody : MonoBehaviour {
 		{
 			waitTime = (NoteBeats [i] - Constants.beatAdjustment)*TimePerBeat;
 			yield return new WaitForSeconds (waitTime-previousWaitTime);
-			Constants.PlayClip (toneClip, origin);
+			Constants.PlayClip (toneClip, Constants.origin);
 			previousWaitTime = waitTime;
 			i++;
 		}

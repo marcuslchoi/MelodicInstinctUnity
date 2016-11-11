@@ -14,6 +14,8 @@ public class Constants : MonoBehaviour {
 
 	public static float maxBeatDifference = .25f;
 
+	public static Vector3 origin = new Vector3 (0, 0, 0);
+
 	//this method created to play the audio clip like AudioSource.PlayClipAtPoint, 
 	//but now with volume control of the temporarily created AudioSource game object
 	//http://answers.unity3d.com/questions/316575/adjust-properties-of-audiosource-created-with-play.html
@@ -24,7 +26,7 @@ public class Constants : MonoBehaviour {
 		AudioSource aSource = tempGO.AddComponent<AudioSource>(); // add an audio source
 		aSource.clip = clip; // define the clip
 		// set other aSource properties here, if desired
-		aSource.Play(); // start the sound
+		aSource.PlayDelayed(0f);// Play(); // start the sound
 		Destroy(tempGO, clip.length); // destroy object after clip duration
 
 		//aSource.pitch = 1.0f;

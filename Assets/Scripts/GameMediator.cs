@@ -9,6 +9,7 @@ public class GameMediator : MonoBehaviour
 
 	public Button PlayButton;
 	public Camera CameraCanvas;
+	public List<GameObject> Notes3D;
 
 	public GameObject Solfege3D;
 
@@ -31,8 +32,8 @@ public class GameMediator : MonoBehaviour
 
 	Dictionary<string,GameObject> SolfToAnimation = new Dictionary<string,GameObject>();
 
-	string tonic = "Eb";
-	int tempo = 120;
+	string tonic = "C";
+	int tempo = 60;
 	int melodyLength = 4;
 	int measures = 2;
 	int beatsPerMeasure = 4;
@@ -53,6 +54,7 @@ public class GameMediator : MonoBehaviour
 			numberHalves = 15;
 
 		float halfKey = maxX/(float)numberHalves;
+		float buttonWidth = 2f * halfKey;
 		float distToLeft = 0; //+padding
 		float distToBottom;
 
@@ -68,7 +70,6 @@ public class GameMediator : MonoBehaviour
 			var playToneBtn = ToneButtons[i].gameObject.GetComponent<PlayToneBtn> ();
 			var musicNote = myScale.MusicNotes [i + myScale.TonicIndex];
 			char keyColor = MusicNote.TonicToKeyLayout [tonic] [i];
-			print (tonic+" "+keyColor);
 
 			if (keyColor == 'W') 
 			{
@@ -90,12 +91,15 @@ public class GameMediator : MonoBehaviour
 				distToLeft += halfKey;
 
 			ToneButtons [i].transform.position = CameraCanvas.ViewportToWorldPoint (new Vector3 (distToLeft, distToBottom, distToCamera));
+			playToneBtn.keyImage.rectTransform.sizeDelta = new Vector2 (150, 50);
 
 			previousKeyColor = keyColor;
 		}
 
-		//16f should be melody playtime
-		InvokeRepeating ("PlayButtonOnClick", 1f, 8f);
+		var playtime = Constants.SECONDS_PER_MIN/tempo*(float)beatsPerMeasure*(float)measures;
+
+		//last argument should be melody playtime
+		InvokeRepeating ("PlayButtonOnClick", 1f, playtime*2f);
 
 	}
 
