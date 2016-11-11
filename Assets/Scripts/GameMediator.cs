@@ -105,6 +105,12 @@ public class GameMediator : MonoBehaviour
 
 	public void PlayButtonOnClick()
 	{
+		foreach (var note3D in Notes3D) 
+		{
+			Renderer rend = note3D.GetComponentInChildren<Renderer>();
+			rend.material.color=Color.black;
+			note3D.SetActive (false);
+		}
 		Feedback.text = "";
 		melodiesPlayed++;
 		isCorrectMelody = true;
@@ -125,23 +131,31 @@ public class GameMediator : MonoBehaviour
 		foreach (var beat in currentMelody.NoteBeats)
 			print (beat);
 
-//		foreach (var note in myScale.MusicNotes) {
-//		
-//			print (note.Solfege + " is " + note.NameFlat);
-//		}
-
-		StartCoroutine(Wait(currentMelody.Playtime));
+//		StartCoroutine(Wait(currentMelody.Playtime));
 	
 		StartCoroutine (currentMelody.Play ());
+		StartCoroutine (EnableNotes3D ());
 	}
 
-	IEnumerator Wait(float melodyPlaytime)
+	IEnumerator EnableNotes3D()
 	{
-	
-		yield return new WaitForSeconds (melodyPlaytime);
+		var timesBetweenNotes = currentMelody.TimesBetweenNotes;
+		for (var i = 0; i < timesBetweenNotes.Count; i++) 
+		{
+			yield return new WaitForSeconds (currentMelody.TimesBetweenNotes[i]);
+			Notes3D [i].SetActive (true);
+		}
 
-		PlayButton.interactable = true;
 	}
+
+
+//	IEnumerator Wait(float melodyPlaytime)
+//	{
+//	
+//		yield return new WaitForSeconds (melodyPlaytime);
+//
+//		PlayButton.interactable = true;
+//	}
 
 	public static float timeBeginAnswer;
 
@@ -165,16 +179,20 @@ public class GameMediator : MonoBehaviour
 		//only display wrong if within the guesses range of the melody
 		if (guesses <= currentMelody.Notes.Count) 
 		{
+			Renderer rend = Notes3D[guesses-1].GetComponentInChildren<Renderer>();
 
 			if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat)) 
 			{
 				isCorrectMelody = false;
+				Feedback.color = Color.red;
 				StartCoroutine (FlashWrong ());
+				rend.material.color=Color.red;
 			
 			} 
 			else 
 			{
 				Feedback.text = "";
+				rend.material.color = Color.green;
 			}
 
 			if (guesses == currentMelody.Notes.Count) 
@@ -183,6 +201,7 @@ public class GameMediator : MonoBehaviour
 				{
 					correctMelodies++;
 					Feedback.text = "CORRECT!";
+					Feedback.color = Color.green;
 				}
 				
 				StatsText.text = correctMelodies +"/"+ melodiesPlayed;

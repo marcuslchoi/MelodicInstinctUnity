@@ -10,6 +10,7 @@ public class Melody : MonoBehaviour {
 	private Scale _scale;
 	private List<MusicNote> _notes = new List<MusicNote>();
 	private List<float> _noteBeats = new List<float> ();	//the beats on which the notes are played
+	private List<float> _timesBetweenNotes = new List<float>();
 	private int _tempoBPM;
 	private List<AudioClip> _toneClips = new List<AudioClip>();
 	private int _bigInterval = 10;
@@ -42,6 +43,13 @@ public class Melody : MonoBehaviour {
 		Length = answerNotes.Count;
 
 		//NoteBeats = noteBeats;
+	}
+
+	//times when note is to be played 
+	public List<float> TimesBetweenNotes 
+	{
+		get{ return _timesBetweenNotes; }
+		private set{ _timesBetweenNotes = value; }
 	}
 
 	public int BigInterval 
@@ -112,27 +120,17 @@ public class Melody : MonoBehaviour {
 		get{ return _scale; }
 		set{ _scale=value; }
 	}
-
-
-	//TODO: PLAY THE MELODY BASED ON NOTES, NOTEBEATS, BPM
+		
 	public IEnumerator Play()
 	{
-		float waitTime;
-		float previousWaitTime = 0f;
-
 		var i = 0;
 		foreach (var toneClip in _toneClips) 
 		{
-			waitTime = (NoteBeats [i] - Constants.beatAdjustment)*TimePerBeat;
-			yield return new WaitForSeconds (waitTime-previousWaitTime);
+			yield return new WaitForSeconds (TimesBetweenNotes[i]);
 			Constants.PlayClip (toneClip, Constants.origin);
-			previousWaitTime = waitTime;
 			i++;
 		}
-
-		//yield return null;
 	}
-
 
 	private void GenerateNoteBeats()
 	{
@@ -155,8 +153,17 @@ public class Melody : MonoBehaviour {
 		
 		beatIndices.Sort();
 
-		foreach (var beatIndex in beatIndices)
-			NoteBeats.Add (POSSBEATS [beatIndex]);
+		var previousWaitTime = 0f;
+		foreach (var beatIndex in beatIndices) 
+		{
+			var beat = POSSBEATS [beatIndex];
+			var noteWaitTime = (beat - Constants.beatAdjustment)*TimePerBeat;
+
+			NoteBeats.Add (beat);
+			TimesBetweenNotes.Add(noteWaitTime-previousWaitTime);
+
+			previousWaitTime = noteWaitTime;
+		}
 
 		Playtime = TimePerBeat*(float)BeatsPerMeasure*(float)Measures;
 	}
