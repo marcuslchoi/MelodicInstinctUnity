@@ -45,17 +45,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\Answer.cs" />
-     <Compile Include="Assets\Scripts\Constants.cs" />
-     <Compile Include="Assets\Scripts\CylinderAnimate.cs" />
-     <Compile Include="Assets\Scripts\GameMediator.cs" />
-     <Compile Include="Assets\Scripts\LevelManager.cs" />
-     <Compile Include="Assets\Scripts\Melody.cs" />
-     <Compile Include="Assets\Scripts\MusicNote.cs" />
-     <Compile Include="Assets\Scripts\MusicPlayer.cs" />
-     <Compile Include="Assets\Scripts\PlayScript.cs" />
-     <Compile Include="Assets\Scripts\PlayToneBtn.cs" />
-     <Compile Include="Assets\Scripts\Scale.cs" />
+     <Compile Include="Assets\MyScripts\Answer.cs" />
+     <Compile Include="Assets\MyScripts\Constants.cs" />
+     <Compile Include="Assets\MyScripts\CylinderAnimate.cs" />
+     <Compile Include="Assets\MyScripts\GameMediator.cs" />
+     <Compile Include="Assets\MyScripts\HelicopterHover.cs" />
+     <Compile Include="Assets\MyScripts\HelicopterMainRotorAnimate.cs" />
+     <Compile Include="Assets\MyScripts\LevelManager.cs" />
+     <Compile Include="Assets\MyScripts\Melody.cs" />
+     <Compile Include="Assets\MyScripts\MusicNote.cs" />
+     <Compile Include="Assets\MyScripts\MusicPlayer.cs" />
+     <Compile Include="Assets\MyScripts\PlayScript.cs" />
+     <Compile Include="Assets\MyScripts\PlayToneBtn.cs" />
+     <Compile Include="Assets\MyScripts\Scale.cs" />
      <Compile Include="Assets\theNotes\Script\CamControl.cs" />
      <Compile Include="Assets\theNotes\Script\GUIConrtol_note.cs" />
      <Compile Include="Assets\theNotes\Script\NoteAnimatorControl.cs" />
@@ -87,6 +89,7 @@
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\Contrast Stretch\Apply.shader" />
      <None Include="Assets\theNotes\00_ReadMe\ReadMe_en.txt" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\frag_ao.cginc" />
+     <None Include="Assets\Baker House\Readme.txt" />
      <None Include="Assets\Standard Assets\Effects\ToonShading\Shaders\ToonBasicOutline.shader" />
      <None Include="Assets\theNotes\Script\IMinfo.txt" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_DepthOfField\DepthOfField34.shader" />
