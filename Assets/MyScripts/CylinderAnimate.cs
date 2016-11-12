@@ -10,7 +10,7 @@ public class CylinderAnimate : MonoBehaviour {
 
 	//TODO: use OnEnable
 
-	float speed = 1000f;
+	float speed = 100f;
 
 	void Update ()
 	{

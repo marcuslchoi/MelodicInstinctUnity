@@ -48,6 +48,7 @@
      <Compile Include="Assets\MyScripts\Answer.cs" />
      <Compile Include="Assets\MyScripts\Constants.cs" />
      <Compile Include="Assets\MyScripts\CylinderAnimate.cs" />
+     <Compile Include="Assets\MyScripts\Dropdown.cs" />
      <Compile Include="Assets\MyScripts\GameMediator.cs" />
      <Compile Include="Assets\MyScripts\HelicopterHover.cs" />
      <Compile Include="Assets\MyScripts\HelicopterMainRotorAnimate.cs" />
