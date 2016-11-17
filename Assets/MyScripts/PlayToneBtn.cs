@@ -6,25 +6,28 @@ using UnityEngine.EventSystems;
 //[RequireComponent(typeof(AudioSource))]
 public class PlayToneBtn : MonoBehaviour,IPointerDownHandler 
 {
-
-	public MusicNote note;
-	AudioClip audioClip;
 	public Text toneText;
-	public static string solfClicked;
 	public Image keyImage;
 
+	private AudioClip audioClip;
+
+	public static string solfClicked;
 	public static bool isCorrectNote;
 	public static bool isCorrectBeat;
 
 	AudioSource audioSource;
 
+	public MusicNote Note {
+		get;
+		set;
+	}
+
 	//TODO: MOVE (IN)CORRECT LOGIC TO GAME MEDIATOR
 	public void OnPointerDown(PointerEventData data)
 	{
-		solfClicked = toneText.text;
-
-		//audioSource.Play ();
 		Constants.PlayClip (audioClip, Constants.origin);
+
+		solfClicked = toneText.text;
 
 		var melody = GameMediator.currentMelody;
 		var guesses = GameMediator.guesses;
@@ -44,8 +47,9 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 			isCorrectNote = false;
 
 			var currentSolf = melody.Notes [guesses].Solfege.ToString ();
+			var currentSolfGeneral = Constants.RemoveLast (currentSolf);
 
-			if (currentSolf.Contains (solfClicked))
+			if (currentSolfGeneral == solfClicked)
 				isCorrectNote = true;
 
 			print (isCorrectNote + " " + solfClicked);
@@ -60,11 +64,17 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 	public void PopulateFields () {
 
 		//audioSource = GetComponent<AudioSource> ();
-		var noteNameGeneral = Constants.RemoveLast (note.NameFlat);
+		var noteNameGeneral = Constants.RemoveLast (Note.NameFlat);
 		audioClip = Resources.Load<AudioClip> (noteNameGeneral+Constants.lowerOct);
 		//audioSource.clip = audioClip;
-		toneText.text = note.Solfege.ToString ();
+		toneText.text = Constants.RemoveLast(Note.Solfege.ToString ());
 
+	}
+
+	//this is called from game mediator to match current tone octave
+	public void SetAudioClip(AudioClip aClip)
+	{
+		audioClip = aClip;
 	}
 
 }

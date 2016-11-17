@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
+using System.Linq;
 
 public class Melody : MonoBehaviour {
 
@@ -43,6 +44,11 @@ public class Melody : MonoBehaviour {
 		Length = answerNotes.Count;
 
 		//NoteBeats = noteBeats;
+	}
+
+	public List<AudioClip> ToneClips {
+		get{ return _toneClips.ToList (); }
+		//set;
 	}
 
 	//times when note is to be played 

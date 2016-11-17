@@ -129,7 +129,7 @@ public class GameMediator : MonoBehaviour
 
 			//assign the music note to the button
 			var musicNote = myScale.MusicNotes [i + myScale.TonicIndex];
-			playToneBtn.note = musicNote;
+			playToneBtn.Note = musicNote;
 			playToneBtn.PopulateFields ();
 		}
 	
@@ -144,10 +144,10 @@ public class GameMediator : MonoBehaviour
 
 	public void PlayCurrentMelody()
 	{
-		guesses = 0;
-
 		if (timer.TimeLeft == 0)
 			CancelInvoke ("PlayCurrentMelody");
+		
+		guesses = 0;
 
 		//hide the 3d notes
 		foreach (var note3D in Notes3D) 
@@ -167,8 +167,10 @@ public class GameMediator : MonoBehaviour
 
 		GenerateNewMelody (tonic);
 
-		//TODO: CALL THIS ONLY IF TONIC CHANGED
+		//TODO: CALL THIS ONLY IF TONIC CHANGED, SEPARATE OUT LOGIC THAT ASSIGNS AUDIO CLIPS
 		PositionToneButtons (tonic);
+
+		AssignAudioClipInCorrectOctave ();
 
 		timeBeginAnswer = Time.time + currentMelody.Playtime;
 
@@ -182,6 +184,18 @@ public class GameMediator : MonoBehaviour
 
 		StatsText.text = correctMelodies +"/"+ melodiesPlayed;
 
+	}
+
+	void AssignAudioClipInCorrectOctave()
+	{
+		foreach (var toneButton in ToneButtons) {
+
+			var playToneBtn = toneButton.GetComponent<PlayToneBtn> ();
+			if (currentMelody.Notes [guesses].Solfege.ToString ().Contains (playToneBtn.toneText.text))
+				playToneBtn.SetAudioClip (currentMelody.ToneClips [guesses]);	
+
+		}
+	
 	}
 
 	IEnumerator TempDisableToneButtons()
@@ -258,6 +272,9 @@ public class GameMediator : MonoBehaviour
 
 		}
 		guesses++;
+
+		if (guesses < currentMelody.Notes.Count) 
+			AssignAudioClipInCorrectOctave ();
 	}
 
 	IEnumerator FlashWrong()
