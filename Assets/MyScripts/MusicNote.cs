@@ -17,7 +17,7 @@ public class MusicNote : MonoBehaviour {
 	//system calls this
 	static MusicNote()
 	{
-		//TODO: THIS IS REPEATED CODE
+		//TODO: DRY
 		List<string> notes = new List<string>{ "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
 		List<char> keyLayout = new List<char>{ 'W', 'B', 'W', 'B', 'W', 'W', 'B', 'W', 'B', 'W', 'B', 'W' };
 

@@ -12,6 +12,7 @@ public class GameMediator : MonoBehaviour
 	public List<GameObject> Notes3D;
 	public Slider BPMSlider;
 	public Text BPMText;
+	public Text TonicText;
 
 	public GameObject Solfege3D;
 
@@ -36,7 +37,7 @@ public class GameMediator : MonoBehaviour
 
 	Dictionary<string,GameObject> SolfToAnimation = new Dictionary<string,GameObject>();
 
-	string tonic = "C";
+	string tonic;// = "C";
 	int tempo;// = 60;
 	int melodyLength = 4;
 	int measures = 2;
@@ -45,10 +46,13 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		
 		BPMSlider.minValue = 30f;
 		BPMSlider.maxValue = 200f;
 		BPMSlider.value = 70f;
 
+		//TODO: DRY
+		tonic = TonicText.text;
 		tempo = (int)BPMSlider.value;
 
 		//viewport coordinates
@@ -244,14 +248,14 @@ public class GameMediator : MonoBehaviour
 
 	public void BPMSliderOnValueChanged(float value)
 	{
-		tempo = (int)BPMSlider.value;
+		tempo = (int)value;//BPMSlider.value;
 		BPMText.text = string.Format ("TEMPO: {0} BPM",tempo);
 
 	}
-	
-	// Update is called once per frame
-	void Update () {
+	public void TonicDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
+	{
+		tonic = TonicText.text;
+		print ("new tonic: " + tonic);
 
-		//print (timeBeginAnswer);
 	}
 }
