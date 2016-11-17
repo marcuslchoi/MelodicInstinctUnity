@@ -11,6 +11,7 @@ public class GameMediator : MonoBehaviour
 	public Camera CameraCanvas;
 	public List<GameObject> Notes3D;
 	public Slider BPMSlider;
+	public Text BPMText;
 
 	public GameObject Solfege3D;
 
@@ -46,7 +47,7 @@ public class GameMediator : MonoBehaviour
 	{
 		BPMSlider.minValue = 30f;
 		BPMSlider.maxValue = 200f;
-		BPMSlider.value = 200f;
+		BPMSlider.value = 70f;
 
 		tempo = (int)BPMSlider.value;
 
@@ -193,7 +194,6 @@ public class GameMediator : MonoBehaviour
 	bool isCorrectMelody;
 	private void ToneOnClick()
 	{
-		
 		//only display wrong if within the guesses range of the melody
 		if (guesses <= currentMelody.Notes.Count) 
 		{
@@ -245,7 +245,8 @@ public class GameMediator : MonoBehaviour
 	public void BPMSliderOnValueChanged(float value)
 	{
 		tempo = (int)BPMSlider.value;
-	
+		BPMText.text = string.Format ("TEMPO: {0} BPM",tempo);
+
 	}
 	
 	// Update is called once per frame
