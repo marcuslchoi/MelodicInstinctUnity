@@ -12,6 +12,8 @@ public class GameMediator : MonoBehaviour
 	public List<GameObject> Notes3D;
 	public Slider BPMSlider;
 	public Text BPMText;
+	public Slider MelodyLengthSlider;
+	public Text MelodyLengthText;
 	public Text TonicText;
 
 	public GameObject Solfege3D;
@@ -24,6 +26,7 @@ public class GameMediator : MonoBehaviour
 	Scale myScale;
 
 	public Timer timer;
+	public Text GameLengthText;
 
 	public List<GameObject> Solfege3Ds;
 
@@ -35,7 +38,7 @@ public class GameMediator : MonoBehaviour
 
 	string tonic;// = "C";
 	int tempo;// = 60;
-	int melodyLength = 4;
+	int melodyLength;// = 4;
 	int measures = 2;
 	int beatsPerMeasure = 4;
 
@@ -47,9 +50,14 @@ public class GameMediator : MonoBehaviour
 		BPMSlider.maxValue = 200f;
 		BPMSlider.value = 70f;
 
+		MelodyLengthSlider.minValue = 1f;
+		MelodyLengthSlider.maxValue = 8f;
+		MelodyLengthSlider.value = 4f;;
+
 		//TODO: DRY
 		tonic = TonicText.text;
 		tempo = (int)BPMSlider.value;
+		melodyLength = (int)MelodyLengthSlider.value;
 
 		//TODO: GET THIS FROM OPTIONS
 		timer.Minutes = 2;
@@ -272,6 +280,12 @@ public class GameMediator : MonoBehaviour
 		BPMText.text = string.Format ("TEMPO: {0} BPM",tempo);
 
 	}
+	public void MelodyLengthSliderOnValueChanged(float value)
+	{
+		melodyLength = (int)value;
+		MelodyLengthText.text = string.Format ("{0} NOTES / MELODY",melodyLength);
+
+	}
 	public void TonicDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
 	{
 		tonic = TonicText.text;
@@ -281,7 +295,10 @@ public class GameMediator : MonoBehaviour
 
 	public void GameLengthDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
 	{
-		timer.Minutes = dropdown.value + 1;
+		var gameLengthTempArray = GameLengthText.text.Split (' ');
+		var minutes = int.Parse(gameLengthTempArray [0]);
+
+		timer.Minutes = minutes;
 		timer.Text.text = timer.Minutes + ":00";
 
 	}
