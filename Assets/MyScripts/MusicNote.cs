@@ -54,6 +54,7 @@ public class MusicNote : MonoBehaviour {
 		get{ return new Dictionary<string, string>(_flatToSharp); }
 	}
 
+	//TODO: SHALLOW COPY
 	public static Dictionary<string,List<char>> TonicToKeyLayout 
 	{
 		get{ return new Dictionary<string, List<char>>(_tonicToKeyLayout); }

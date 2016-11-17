@@ -50,11 +50,7 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 			print (isCorrectNote + " " + solfClicked);
 			print (isCorrectBeat + "(" + answerBeat + ")");
 
-//			if (!(isCorrectBeat && isCorrectNote))
-//				GameMediator.WrongText.gameObject.SetActive (true);
 		}
-
-		//StartCoroutine (EnableAnimatedGO (PlayToneBtn.solfClicked));
 
 		GameMediator.guesses++;
 
@@ -71,9 +67,5 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 		toneText.text = note.Solfege.ToString ();
 
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
 }

@@ -25,10 +25,6 @@ public class GameMediator : MonoBehaviour
 
 	public Timer timer;
 
-//	bool displayWrongText;
-//
-//	bool displayCorrectText;
-
 	public List<GameObject> Solfege3Ds;
 
 	public List<Button> ToneButtons;
@@ -55,6 +51,18 @@ public class GameMediator : MonoBehaviour
 		tonic = TonicText.text;
 		tempo = (int)BPMSlider.value;
 
+		myScale = new Scale (tonic, ScaleType.MAJOR);
+		//currentMelody = new Melody (melodyLength, myScale, tempo);
+
+		PositionToneButtons ();
+
+		//TODO: GET THIS FROM OPTIONS
+		timer.Minutes = 1;
+	}
+
+	//positions tone buttons and assigns note to each
+	void PositionToneButtons()
+	{
 		//viewport coordinates
 		float maxX = 1f;
 		float distToCamera = transform.position.z - CameraCanvas.transform.position.z;
@@ -72,17 +80,13 @@ public class GameMediator : MonoBehaviour
 		float distToLeft = 0; //+padding
 		float distToBottom;
 
-		//Vector3 seat0 = View.CameraCardsSeatsChips.ViewportToWorldPoint (new Vector3 (middle,distToBottom,distToCamera));
-
-		myScale = new Scale (tonic, ScaleType.MAJOR);
-		//currentMelody = new Melody (melodyLength, myScale, tempo);
-
+		//this puts the tone keys in correct position depending on tonic
 		char previousKeyColor=' ';
 		for (var i = 0; i < ToneButtons.Count; i++) 
 		{
 			ToneButtons [i].onClick.AddListener (ToneOnClick);
 			var playToneBtn = ToneButtons[i].gameObject.GetComponent<PlayToneBtn> ();
-			var musicNote = myScale.MusicNotes [i + myScale.TonicIndex];
+
 			char keyColor = MusicNote.TonicToKeyLayout [tonic] [i];
 
 			if (keyColor == 'W') 
@@ -96,22 +100,26 @@ public class GameMediator : MonoBehaviour
 				playToneBtn.toneText.color = Color.white;
 			}
 
-			playToneBtn.note = musicNote;
-			playToneBtn.PopulateFields ();
-
 			if (keyColor == previousKeyColor && keyColor == 'W')
 				distToLeft += 2f * halfKey;
 			else
 				distToLeft += halfKey;
 
 			ToneButtons [i].transform.position = CameraCanvas.ViewportToWorldPoint (new Vector3 (distToLeft, distToBottom, distToCamera));
-			playToneBtn.keyImage.rectTransform.sizeDelta = new Vector2 (150, 50);
+
+			//convert to coordinates relative to screen size
+			float width = (float)Screen.width * halfKey*2f;
+			float height = (float)Screen.height * buttonHeight;
+			playToneBtn.keyImage.rectTransform.sizeDelta = new Vector2 (width,height);
 
 			previousKeyColor = keyColor;
-		}
 
-		//TODO: GET THIS FROM OPTIONS
-		timer.Minutes = 1;
+			//assign the music note to the button
+			var musicNote = myScale.MusicNotes [i + myScale.TonicIndex];
+			playToneBtn.note = musicNote;
+			playToneBtn.PopulateFields ();
+		}
+	
 	}
 
 	public void PlayButtonOnClick()
