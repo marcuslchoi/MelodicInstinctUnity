@@ -18,7 +18,6 @@ public class Timer : MonoBehaviour {
 		private set;
 	}
 
-	// Use this for initialization
 	void Start () 
 	{
 		Text.text = string.Format ("{0}:00", Minutes);
@@ -62,73 +61,5 @@ public class Timer : MonoBehaviour {
 
 		}
 	}
-
-
-//	float timeLeft = 60f*60f*4f; //in seconds
-//	float hours;
-//	float minutes;
-//	float seconds;
-//	string betweenHoursMinutes;
-//	string betweenMinutesSeconds;
-//	bool isTimerRunning = true;
-//	bool _setRedeemText = false;
-//	void Update()
-//	{
-//		if (_setRedeemText)
-//		{
-//			if (timeLeft > 0)
-//			{
-//				timeLeft -= Time.deltaTime;
-//				hours = Mathf.Floor(timeLeft / 3600);
-//				minutes = Mathf.Floor(timeLeft / 60) - hours * 60;
-//				seconds = Mathf.Floor(timeLeft % 60);
-//
-//				/*
-//                if(seconds > 59) 
-//                    seconds = 59;
-//
-//                if (hours < 0)
-//                    hours = 0;
-//                */
-//
-//				if (minutes < 0)
-//				{
-//					if (hours == 0)
-//					{
-//						//stop = true;
-//						minutes = 0;
-//						seconds = 0;
-//
-//					}
-//					else {
-//						minutes = 59;
-//					}
-//				}
-//				if (minutes < 10)
-//				{
-//					betweenHoursMinutes = ":0";
-//				}
-//				else {
-//					betweenHoursMinutes = ":";
-//				}
-//				if (seconds < 10)
-//				{
-//					betweenMinutesSeconds = ":0";
-//				}
-//				else {
-//					betweenMinutesSeconds = ":";
-//				}
-//
-//				View.Timer.text = hours + betweenHoursMinutes + minutes + betweenMinutesSeconds + seconds;// Mathf.Round(timeLeft).ToString();
-//
-//			}
-//			else {
-//
-//				isTimerRunning = false;
-//				View.Redeem.interactable = true;
-//				View.Timer.text = "$" + redeemAmount;
-//			}
-//		}
-//	}
 
 }

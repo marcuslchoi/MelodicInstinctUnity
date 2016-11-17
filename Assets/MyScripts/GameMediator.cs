@@ -51,18 +51,23 @@ public class GameMediator : MonoBehaviour
 		tonic = TonicText.text;
 		tempo = (int)BPMSlider.value;
 
-		myScale = new Scale (tonic, ScaleType.MAJOR);
-		//currentMelody = new Melody (melodyLength, myScale, tempo);
-
-		PositionToneButtons ();
-
 		//TODO: GET THIS FROM OPTIONS
 		timer.Minutes = 2;
 	}
 
-	//positions tone buttons and assigns note to each
-	void PositionToneButtons()
+	void GenerateNewMelody(string tonic)
 	{
+		myScale = new Scale (tonic, ScaleType.MAJOR);
+		currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
+	
+	}
+
+	//positions tone buttons and assigns note to each
+	void PositionToneButtons(string tonic)
+	{
+		foreach (var toneButton in ToneButtons)
+			toneButton.onClick.RemoveAllListeners ();
+
 		//viewport coordinates
 		float maxX = 1f;
 		float distToCamera = transform.position.z - CameraCanvas.transform.position.z;
@@ -131,9 +136,12 @@ public class GameMediator : MonoBehaviour
 
 	public void PlayCurrentMelody()
 	{
+		guesses = 0;
+
 		if (timer.TimeLeft == 0)
 			CancelInvoke ("PlayCurrentMelody");
 
+		//hide the 3d notes
 		foreach (var note3D in Notes3D) 
 		{
 			Renderer rend = note3D.GetComponentInChildren<Renderer>();
@@ -144,15 +152,15 @@ public class GameMediator : MonoBehaviour
 		melodiesPlayed++;
 		isCorrectMelody = true;
 
-		//PlayButton.interactable = false;
-		guesses = 0;
-
+		//plays the drum track
 		AudioSource aSource = GetComponent<AudioSource>();
 		aSource.pitch = (float)tempo / Constants.SECONDS_PER_MIN;
 		aSource.Play ();
 
-		//myScale = new Scale (tonic, ScaleType.MAJOR);
-		currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
+		GenerateNewMelody (tonic);
+
+		//TODO: CALL THIS ONLY IF TONIC CHANGED
+		PositionToneButtons (tonic);
 
 		timeBeginAnswer = Time.time + currentMelody.Playtime;
 
@@ -160,12 +168,23 @@ public class GameMediator : MonoBehaviour
 		foreach (var beat in currentMelody.NoteBeats)
 			print (beat);
 
-//		StartCoroutine(Wait(currentMelody.Playtime));
-	
+		StartCoroutine (TempDisableToneButtons ());
 		StartCoroutine (currentMelody.Play ());
 		StartCoroutine (EnableNotes3D ());
 
 		StatsText.text = correctMelodies +"/"+ melodiesPlayed;
+
+	}
+
+	IEnumerator TempDisableToneButtons()
+	{
+		foreach (var toneButton in ToneButtons)
+			toneButton.enabled = false;
+	
+		yield return new WaitForSeconds (currentMelody.Playtime);
+
+		foreach (var toneButton in ToneButtons)
+			toneButton.enabled = true;
 	}
 
 	IEnumerator EnableNotes3D()
@@ -178,15 +197,6 @@ public class GameMediator : MonoBehaviour
 		}
 
 	}
-
-
-//	IEnumerator Wait(float melodyPlaytime)
-//	{
-//	
-//		yield return new WaitForSeconds (melodyPlaytime);
-//
-//		PlayButton.interactable = true;
-//	}
 
 	public static float timeBeginAnswer;
 

@@ -18,6 +18,7 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 
 	AudioSource audioSource;
 
+	//TODO: MOVE (IN)CORRECT LOGIC TO GAME MEDIATOR
 	public void OnPointerDown(PointerEventData data)
 	{
 		solfClicked = toneText.text;
