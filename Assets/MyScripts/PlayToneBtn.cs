@@ -50,9 +50,7 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 			print (isCorrectNote + " " + solfClicked);
 			print (isCorrectBeat + "(" + answerBeat + ")");
 
-		}
-
-		GameMediator.guesses++;
+		}			
 
 	}
 

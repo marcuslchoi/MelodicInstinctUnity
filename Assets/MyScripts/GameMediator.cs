@@ -57,7 +57,7 @@ public class GameMediator : MonoBehaviour
 		PositionToneButtons ();
 
 		//TODO: GET THIS FROM OPTIONS
-		timer.Minutes = 1;
+		timer.Minutes = 2;
 	}
 
 	//positions tone buttons and assigns note to each
@@ -207,9 +207,9 @@ public class GameMediator : MonoBehaviour
 	private void ToneOnClick()
 	{
 		//only display wrong if within the guesses range of the melody
-		if (guesses <= currentMelody.Notes.Count) 
+		if (guesses < currentMelody.Notes.Count) 
 		{
-			Renderer rend = Notes3D[guesses-1].GetComponentInChildren<Renderer>();
+			Renderer rend = Notes3D[guesses].GetComponentInChildren<Renderer>();
 
 			if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat)) 
 			{
@@ -225,7 +225,7 @@ public class GameMediator : MonoBehaviour
 				rend.material.color = Color.green;
 			}
 
-			if (guesses == currentMelody.Notes.Count) 
+			if (guesses == currentMelody.Notes.Count-1) 
 			{	
 				if (isCorrectMelody) 
 				{
@@ -238,6 +238,7 @@ public class GameMediator : MonoBehaviour
 			}
 
 		}
+		guesses++;
 	}
 
 	IEnumerator FlashWrong()
