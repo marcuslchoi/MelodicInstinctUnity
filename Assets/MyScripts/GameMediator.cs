@@ -180,8 +180,9 @@ public class GameMediator : MonoBehaviour
 	{
 		foreach (var toneButton in ToneButtons)
 			toneButton.enabled = false;
-	
-		yield return new WaitForSeconds (currentMelody.Playtime);
+
+		//disable for melody playtime minus 1 beat
+		yield return new WaitForSeconds (currentMelody.Playtime - currentMelody.TimePerBeat);
 
 		foreach (var toneButton in ToneButtons)
 			toneButton.enabled = true;
@@ -275,6 +276,13 @@ public class GameMediator : MonoBehaviour
 	{
 		tonic = TonicText.text;
 		print ("new tonic: " + tonic);
+
+	}
+
+	public void GameLengthDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
+	{
+		timer.Minutes = dropdown.value + 1;
+		timer.Text.text = timer.Minutes + ":00";
 
 	}
 }
