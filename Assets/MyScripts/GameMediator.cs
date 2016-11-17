@@ -10,6 +10,7 @@ public class GameMediator : MonoBehaviour
 	public Button PlayButton;
 	public Camera CameraCanvas;
 	public List<GameObject> Notes3D;
+	public Slider BPMSlider;
 
 	public GameObject Solfege3D;
 
@@ -19,6 +20,8 @@ public class GameMediator : MonoBehaviour
 
 	public static Melody currentMelody;
 	Scale myScale;
+
+	public Timer timer;
 
 //	bool displayWrongText;
 //
@@ -33,7 +36,7 @@ public class GameMediator : MonoBehaviour
 	Dictionary<string,GameObject> SolfToAnimation = new Dictionary<string,GameObject>();
 
 	string tonic = "C";
-	int tempo = 60;
+	int tempo;// = 60;
 	int melodyLength = 4;
 	int measures = 2;
 	int beatsPerMeasure = 4;
@@ -41,6 +44,12 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		BPMSlider.minValue = 30f;
+		BPMSlider.maxValue = 200f;
+		BPMSlider.value = 200f;
+
+		tempo = (int)BPMSlider.value;
+
 		//viewport coordinates
 		float maxX = 1f;
 		float distToCamera = transform.position.z - CameraCanvas.transform.position.z;
@@ -96,15 +105,22 @@ public class GameMediator : MonoBehaviour
 			previousKeyColor = keyColor;
 		}
 
-		var playtime = Constants.SECONDS_PER_MIN/tempo*(float)beatsPerMeasure*(float)measures;
-
-		//last argument should be melody playtime
-		InvokeRepeating ("PlayButtonOnClick", 1f, playtime*2f);
-
+		//TODO: GET THIS FROM OPTIONS
+		timer.Minutes = 1;
 	}
 
 	public void PlayButtonOnClick()
 	{
+		timer.StartTimer ();
+		var playtime = (float)Constants.SECONDS_PER_MIN/(float)tempo*(float)beatsPerMeasure*(float)measures;
+		InvokeRepeating ("PlayCurrentMelody", 0f, playtime*2f);
+	}
+
+	public void PlayCurrentMelody()
+	{
+		if (timer.TimeLeft == 0)
+			CancelInvoke ("PlayCurrentMelody");
+
 		foreach (var note3D in Notes3D) 
 		{
 			Renderer rend = note3D.GetComponentInChildren<Renderer>();
@@ -115,7 +131,7 @@ public class GameMediator : MonoBehaviour
 		melodiesPlayed++;
 		isCorrectMelody = true;
 
-		PlayButton.interactable = false;
+		//PlayButton.interactable = false;
 		guesses = 0;
 
 		AudioSource aSource = GetComponent<AudioSource>();
@@ -135,6 +151,8 @@ public class GameMediator : MonoBehaviour
 	
 		StartCoroutine (currentMelody.Play ());
 		StartCoroutine (EnableNotes3D ());
+
+		StatsText.text = correctMelodies +"/"+ melodiesPlayed;
 	}
 
 	IEnumerator EnableNotes3D()
@@ -204,7 +222,7 @@ public class GameMediator : MonoBehaviour
 					Feedback.color = Color.green;
 				}
 				
-				StatsText.text = correctMelodies +"/"+ melodiesPlayed;
+				//StatsText.text = correctMelodies +"/"+ melodiesPlayed;
 			}
 
 		}
@@ -222,6 +240,12 @@ public class GameMediator : MonoBehaviour
 		Feedback.text="WRONG";
 		yield return new WaitForSeconds (flashOnTime);
 		Feedback.text = "";
+	}
+
+	public void BPMSliderOnValueChanged(float value)
+	{
+		tempo = (int)BPMSlider.value;
+	
 	}
 	
 	// Update is called once per frame
