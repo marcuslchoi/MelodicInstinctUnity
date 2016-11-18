@@ -11,7 +11,7 @@ public enum ScaleType { MAJOR, RELATIVE_MINOR, MELODIC_MINOR, HARMONIC_MINOR }
 
 public class Scale : MonoBehaviour {
 
-	//STATICS: are these needed??
+	//STATICS
 
 	public static List<ScaleDegree> Major = new List<ScaleDegree>
 	{ScaleDegree.DOl,ScaleDegree.REl,ScaleDegree.MIl,ScaleDegree.FAl,ScaleDegree.SOLl,ScaleDegree.LAl,ScaleDegree.TIl,
@@ -29,12 +29,20 @@ public class Scale : MonoBehaviour {
 	private string _tonic;
 	private int _tonicIndex;
 
+	//TODO: PUT TYPE IN MELODY?
 	public Scale(string tonic, ScaleType type)
 	{
 		Type = type;
 		Tonic = tonic;
 		PopulateMusicNotes();
 	}
+
+	public Scale(string tonic)
+	{
+		Tonic = tonic;
+		PopulateMusicNotes();
+	}
+
 	public string Tonic
 	{
 		get{ return _tonic; }
@@ -49,13 +57,13 @@ public class Scale : MonoBehaviour {
 	public List<MusicNote> MusicNotes
 	{
 		get;
-		set;
+		private set;
 	}
 
 	public ScaleType Type
 	{
 		get;
-		set;
+		private set;
 	}
 
 	private void PopulateMusicNotes()

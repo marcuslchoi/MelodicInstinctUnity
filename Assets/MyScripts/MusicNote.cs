@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class MusicNote : MonoBehaviour {
 
@@ -17,6 +18,8 @@ public class MusicNote : MonoBehaviour {
 	//system calls this
 	static MusicNote()
 	{
+		//tonic to key layout describes where the black and white piano keys are
+		//in relation to the tonic
 		//TODO: DRY
 		List<string> notes = new List<string>{ "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
 		List<char> keyLayout = new List<char>{ 'W', 'B', 'W', 'B', 'W', 'W', 'B', 'W', 'B', 'W', 'B', 'W' };
@@ -44,17 +47,21 @@ public class MusicNote : MonoBehaviour {
 
 	}
 
-	public MusicNote(string nameFlat)
+//	public MusicNote(string nameFlat)
+//	{
+//		NameFlat = nameFlat;
+//	}
+
+	public MusicNote (string solfegeString)
 	{
-		NameFlat = nameFlat;
+		Solfege = (ScaleDegree)Enum.Parse (typeof(ScaleDegree), solfegeString);
 	}
 
 	public static Dictionary<string,string> FlatToSharp 
 	{
 		get{ return new Dictionary<string, string>(_flatToSharp); }
 	}
-
-	//TODO: SHALLOW COPY
+		
 	public static Dictionary<string,List<char>> TonicToKeyLayout 
 	{
 		get{ return new Dictionary<string, List<char>>(_tonicToKeyLayout); }

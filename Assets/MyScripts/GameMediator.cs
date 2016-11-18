@@ -179,13 +179,14 @@ public class GameMediator : MonoBehaviour
 			print (beat);
 
 		StartCoroutine (TempDisableToneButtons ());
-		StartCoroutine (currentMelody.Play ());
+		StartCoroutine(currentMelody.Play ());
 		StartCoroutine (EnableNotes3D ());
 
 		StatsText.text = correctMelodies +"/"+ melodiesPlayed;
 
 	}
 
+	//assigns audio clip of the scale degree in the same octave as the current note
 	void AssignAudioClipInCorrectOctave()
 	{
 		foreach (var toneButton in ToneButtons) {
@@ -291,6 +292,20 @@ public class GameMediator : MonoBehaviour
 		Feedback.text = "";
 	}
 
+	public void PlayTuneOnClick()
+	{
+		var HereComesTheBrideSolf = new List<string>{"SOLl","DOh","DOh","DOh","SOLl","REh","TIl","DOh"};
+		var HereComesTheBrideNoteBeats = new List<float>{1f,2f,2.66f,3f,5f,6f,6.66f,7f};
+
+		var solfegeStrings = HereComesTheBrideSolf;
+		var noteBeats = HereComesTheBrideNoteBeats;
+
+		var tune = new Melody ("C", 100, solfegeStrings, noteBeats);
+		StartCoroutine(tune.Play ());
+	
+	}
+
+	#region settings
 	public void BPMSliderOnValueChanged(float value)
 	{
 		tempo = (int)value;//BPMSlider.value;
@@ -319,4 +334,5 @@ public class GameMediator : MonoBehaviour
 		timer.Text.text = timer.Minutes + ":00";
 
 	}
+	#endregion
 }

@@ -32,7 +32,28 @@ public class Melody : MonoBehaviour {
 		BeatsPerMeasure = beatsPerMeasure;
 
 		GenerateMusicNotes();
+		SetToneClips ();
+
 		GenerateNoteBeats ();
+		SetTimesBetweenNotes ();
+	}
+
+	//for example tunes
+	public Melody(string tonic, int tempoBPM, List<string> solfegeStrings, List<float> noteBeats)
+	{
+		
+		AllNotesScale = new Scale(tonic);
+		TempoBPM = tempoBPM;
+
+		//populate the notes using allnotesscale and solfstrings
+		foreach (var solfString in solfegeStrings) 
+		{
+			Notes.Add (AllNotesScale.MusicNotes.Find (n => n.Solfege.ToString () == solfString));
+		}
+		SetToneClips ();
+		NoteBeats = noteBeats.ToList();
+		SetTimesBetweenNotes ();
+	
 	}
 
 	//ctor for answer using inputed notes from user
@@ -92,8 +113,8 @@ public class Melody : MonoBehaviour {
 
 	public float Playtime 
 	{
-		get;
-		private set;
+		get{ return TimePerBeat * (float)BeatsPerMeasure * (float)Measures; }
+
 	}
 
 	public float TimePerBeat 
@@ -129,12 +150,28 @@ public class Melody : MonoBehaviour {
 		
 	public IEnumerator Play()
 	{
+
 		var i = 0;
 		foreach (var toneClip in _toneClips) 
 		{
 			yield return new WaitForSeconds (TimesBetweenNotes[i]);
 			Constants.PlayClip (toneClip, Constants.origin);
 			i++;
+		}
+	}
+
+	private void SetToneClips()
+	{
+		//append octave number to general note name to get the audio clip
+		for (var i = 0; i < Notes.Count; i++) 
+		{
+			int octave = Constants.lowerOct;
+			if (Notes [i].NameFlat.Contains (Constants.higherOctIndicator))
+				octave++;
+
+			var noteNameGeneral = Constants.RemoveLast (Notes [i].NameFlat);
+			_toneClips.Add (Resources.Load<AudioClip> (noteNameGeneral + octave));
+
 		}
 	}
 
@@ -159,19 +196,23 @@ public class Melody : MonoBehaviour {
 		
 		beatIndices.Sort();
 
-		var previousWaitTime = 0f;
 		foreach (var beatIndex in beatIndices) 
 		{
 			var beat = POSSBEATS [beatIndex];
-			var noteWaitTime = (beat - Constants.beatAdjustment)*TimePerBeat;
-
 			NoteBeats.Add (beat);
-			TimesBetweenNotes.Add(noteWaitTime-previousWaitTime);
+		}
+	}
 
+	private void SetTimesBetweenNotes()
+	{
+		var previousWaitTime = 0f;
+		foreach (var noteBeat in NoteBeats) 
+		{
+			var noteWaitTime = (noteBeat - Constants.beatAdjustment)*TimePerBeat;
+			TimesBetweenNotes.Add(noteWaitTime-previousWaitTime);
 			previousWaitTime = noteWaitTime;
 		}
-
-		Playtime = TimePerBeat*(float)BeatsPerMeasure*(float)Measures;
+	
 	}
 
 	private void GenerateMusicNotes()
@@ -184,14 +225,12 @@ public class Melody : MonoBehaviour {
 		Notes = new List<MusicNote>();
 		int percentWhole = 100;
 
-
-		//if (TypeToDegrees[Type].Contains(solf))
-		var possMusicNotes = new List<MusicNote>();
-
 		var scaleTypeChosen = AllNotesScale.Type;
 		var scaleDegreesChosen = Scale.TypeToDegrees [scaleTypeChosen];
 		var allMusicNotes = AllNotesScale.MusicNotes;
 
+		//these are the poss music notes for the given scaletype
+		var possMusicNotes = new List<MusicNote>();
 		for(var j = 0; j < allMusicNotes.Count; j++)
 		{
 			var solfege = allMusicNotes [j].Solfege;
@@ -223,15 +262,9 @@ public class Melody : MonoBehaviour {
 			noteIndices.Add(randNoteIndex);
 			Notes.Add(possMusicNotes[randNoteIndex]);
 
-			//append octave number to general note name to get the audio clip
-			int octave = Constants.lowerOct;
-			if (Notes [i].NameFlat.Contains (Constants.higherOctIndicator))
-				octave++;
-
-			var noteNameGeneral = Constants.RemoveLast (Notes [i].NameFlat);
-			_toneClips.Add (Resources.Load<AudioClip>(noteNameGeneral+octave));
-
 		}
+
+		//SetToneClips ();
 	}
 
 }

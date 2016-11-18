@@ -15,7 +15,10 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 	public static bool isCorrectNote;
 	public static bool isCorrectBeat;
 
-	AudioSource audioSource;
+	public bool LearnMode {
+		get;
+		set;
+	}
 
 	public MusicNote Note {
 		get;
