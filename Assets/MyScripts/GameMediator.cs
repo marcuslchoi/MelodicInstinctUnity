@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Parse;
 
 //this is the view/controller
 public class GameMediator : MonoBehaviour
@@ -276,6 +277,10 @@ public class GameMediator : MonoBehaviour
 
 		if (guesses < currentMelody.Notes.Count) 
 			AssignAudioClipInCorrectOctave ();
+
+		ParseObject testObject = new ParseObject("testmongo");
+		testObject ["guesses"] = guesses;
+		testObject.SaveAsync();
 	}
 
 	IEnumerator FlashWrong()
