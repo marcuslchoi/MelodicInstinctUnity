@@ -13,7 +13,7 @@ public class MusicNote : MonoBehaviour {
 
 	private string _nameFlat;
 	private string _nameSharp;
-	private ScaleDegree _solfege;
+	private string _solfege;
 
 	//system calls this
 	static MusicNote()
@@ -39,13 +39,14 @@ public class MusicNote : MonoBehaviour {
 	
 	}
 
-	public MusicNote(ScaleDegree solfege, string nameFlat)
+	public MusicNote(string solfege, string nameFlat)
 	{
 		Solfege = solfege;
 		NameFlat = nameFlat;
 		NameSharp = MusicNote.FlatToSharp[nameFlat];
 
 	}
+
 
 //	public MusicNote(string nameFlat)
 //	{
@@ -54,7 +55,7 @@ public class MusicNote : MonoBehaviour {
 
 	public MusicNote (string solfegeString)
 	{
-		Solfege = (ScaleDegree)Enum.Parse (typeof(ScaleDegree), solfegeString);
+		Solfege = solfegeString;
 	}
 
 	public static Dictionary<string,string> FlatToSharp 
@@ -89,7 +90,7 @@ public class MusicNote : MonoBehaviour {
 		set{ _nameSharp = value; }
 	}
 
-	public ScaleDegree Solfege
+	public string Solfege
 	{
 		get{ return _solfege; }
 		set{ _solfege = value; }

@@ -5,29 +5,50 @@ using System.Diagnostics;
 using System;
 using System.Text;
 
-//TODO: turn this into a class? ie Ra = Di = b2 = #1
-public enum ScaleDegree { DOl, RAl, REl, MEl, MIl, FAl, SEl, SOLl, LEl, LAl, TEl, TIl, DOh, RAh, REh, MEh, MIh, FAh, SEh, SOLh, LEh, LAh, TEh, TIh }
+//public enum ScaleDegree { DOl, RAl, REl, MEl, MIl, FAl, SEl, SOLl, LEl, LAl, TEl, TIl, DOh, RAh, REh, MEh, MIh, FAh, SEh, SOLh, LEh, LAh, TEh, TIh }
 public enum ScaleType { MAJOR, RELATIVE_MINOR, MELODIC_MINOR, HARMONIC_MINOR }
 
 public class Scale : MonoBehaviour {
 
 	//STATICS
 
-	public static List<ScaleDegree> Major = new List<ScaleDegree>
-	{ScaleDegree.DOl,ScaleDegree.REl,ScaleDegree.MIl,ScaleDegree.FAl,ScaleDegree.SOLl,ScaleDegree.LAl,ScaleDegree.TIl,
-		ScaleDegree.DOh,ScaleDegree.REh,ScaleDegree.MIh,ScaleDegree.FAh,ScaleDegree.SOLh,ScaleDegree.LAh,ScaleDegree.TIh };
+	public static List<string> Major = new List<string> ();
 
-	public static List<ScaleDegree> RelativeMinor = new List<ScaleDegree>
-	{ScaleDegree.DOl,ScaleDegree.REl,ScaleDegree.MEl,ScaleDegree.FAl,ScaleDegree.SOLl,ScaleDegree.LEl,ScaleDegree.TEl, 
-		ScaleDegree.DOh,ScaleDegree.REh,ScaleDegree.MEh,ScaleDegree.FAh,ScaleDegree.SOLh,ScaleDegree.LEh,ScaleDegree.TEh};
+//		new List<ScaleDegree>
+//	{ScaleDegree.DOl,ScaleDegree.REl,ScaleDegree.MIl,ScaleDegree.FAl,ScaleDegree.SOLl,ScaleDegree.LAl,ScaleDegree.TIl,
+//		ScaleDegree.DOh,ScaleDegree.REh,ScaleDegree.MIh,ScaleDegree.FAh,ScaleDegree.SOLh,ScaleDegree.LAh,ScaleDegree.TIh };
+
+//	public static List<ScaleDegree> RelativeMinor = new List<ScaleDegree>
+//	{ScaleDegree.DOl,ScaleDegree.REl,ScaleDegree.MEl,ScaleDegree.FAl,ScaleDegree.SOLl,ScaleDegree.LEl,ScaleDegree.TEl, 
+//		ScaleDegree.DOh,ScaleDegree.REh,ScaleDegree.MEh,ScaleDegree.FAh,ScaleDegree.SOLh,ScaleDegree.LEh,ScaleDegree.TEh};
 
 	//DICTIONARY CONTAINING KEY: SCALE TYPES, VALUES: LIST OF SCALE DEGREES 
-	public static Dictionary<ScaleType, List<ScaleDegree>> TypeToDegrees = new Dictionary<ScaleType, List<ScaleDegree>>{
-		{ScaleType.MAJOR,Major}, {ScaleType.RELATIVE_MINOR,RelativeMinor}};
+	public static Dictionary<ScaleType, List<string>> TypeToDegrees = new Dictionary<ScaleType, List<string>>();
+
 	//END STATICS
 
 	private string _tonic;
 	private int _tonicIndex;
+
+	static Scale()
+	{
+		//populate the scale types
+		foreach (var solfege in ScaleTone.SolfegeTwoOctaves) 
+		{
+		
+			//the solfege syllable without an octave indicator
+			var solfegeGeneral = Constants.RemoveLast (solfege);
+
+			if (Constants.MAJOR_TONES.Contains (solfegeGeneral)) 
+			{
+				Major.Add (solfege);
+			}
+			//TODO: OTHER SCALES
+		}
+
+		TypeToDegrees.Add (ScaleType.MAJOR, Major);
+			
+	}
 
 	//TODO: PUT TYPE IN MELODY?
 	public Scale(string tonic, ScaleType type)
@@ -68,6 +89,8 @@ public class Scale : MonoBehaviour {
 
 	private void PopulateMusicNotes()
 	{
+
+		//TODO: = Tonic+lowerOctIndicator
 		StringBuilder tonicWithIndicator = new StringBuilder (Tonic);
 		tonicWithIndicator.Append (Constants.lowerOctIndicator);
 
@@ -75,56 +98,51 @@ public class Scale : MonoBehaviour {
 
 		int i;
 		int toneCount = 12;
-		var solfegeArray = Enum.GetNames(typeof(ScaleDegree));
-		var solfNoteDict = new Dictionary<ScaleDegree, string>();
+		var solfegeTwoOctaves = ScaleTone.SolfegeTwoOctaves; //Enum.GetNames(typeof(ScaleDegree));
+		var solfNoteDict = new Dictionary<string, string>();
 
 		string solfKeyStr;
 		string noteStr;
-		ScaleDegree solfKey;
+		//ScaleDegree solfKey;
 
 		//ie, do = "Bb"
 		//these are the notes below the root
 		for (i = TonicIndex; i > 0; i--)
 		{
-			solfKeyStr = solfegeArray[toneCount - i];
+			solfKeyStr = solfegeTwoOctaves[toneCount - i];
 			noteStr = MusicNote.NotesFlat[TonicIndex - i];
 
-			solfKey = (ScaleDegree)Enum.Parse(typeof(ScaleDegree), solfKeyStr);
-			//note = (NoteName)Enum.Parse(typeof(NoteName), noteStr);
-
-			solfNoteDict[solfKey] = noteStr;
+			solfNoteDict[solfKeyStr] = noteStr;
 		}
 
 		//starts at root index to make sure root is lower 'DO'
-		for (i = TonicIndex; i < solfegeArray.Length; i++)
+		for (i = TonicIndex; i < solfegeTwoOctaves.Count; i++)
 		{
 			noteStr = MusicNote.NotesFlat[i];
 
 			if (i >= TonicIndex && i < toneCount || i >= toneCount + TonicIndex)
 			{
-				solfKeyStr = solfegeArray[i - TonicIndex];
+				solfKeyStr = solfegeTwoOctaves[i - TonicIndex];
 
 			}
 			else //if (i >= toneCount && i < toneCount + tonicIndex)
 			{
-				solfKeyStr = solfegeArray[i - TonicIndex + toneCount];
+				solfKeyStr = solfegeTwoOctaves[i - TonicIndex + toneCount];
 
 			}
 
-			solfKey = (ScaleDegree)Enum.Parse(typeof(ScaleDegree), solfKeyStr);
-
-			solfNoteDict[solfKey] = noteStr;
+			solfNoteDict[solfKeyStr] = noteStr;
 		}
 
 		MusicNotes = new List<MusicNote>();
 
 		//this now generates all tones and puts them in dictionary (not just for specified scale)  
-		foreach (ScaleDegree solf in solfNoteDict.Keys)
+		foreach (string solf in solfNoteDict.Keys)
 		{
 			//if the scaletype of this scale obj contains the solfege key
 			if (true)//(TypeToDegrees[Type].Contains(solf))
 			{
-				MusicNote musicNote = new MusicNote(solf, solfNoteDict[solf].ToString());
+				MusicNote musicNote = new MusicNote(solf, solfNoteDict[solf]);
 				MusicNotes.Add(musicNote);
 			}
 

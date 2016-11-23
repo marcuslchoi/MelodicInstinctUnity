@@ -226,7 +226,8 @@ public class Melody : MonoBehaviour {
 		int percentWhole = 100;
 
 		var scaleTypeChosen = AllNotesScale.Type;
-		var scaleDegreesChosen = Scale.TypeToDegrees [scaleTypeChosen];
+		List<string> scaleDegreesChosen = Scale.TypeToDegrees [scaleTypeChosen];
+
 		var allMusicNotes = AllNotesScale.MusicNotes;
 
 		//these are the poss music notes for the given scaletype

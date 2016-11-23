@@ -10,6 +10,7 @@ public class ScaleTone : MonoBehaviour {
 	private static List<string> _solfegeSharps = new List<string>{"DO","DI","RE","RI","MI","FA","FI","SOL","SI","LA","LI","TI"};
 	private static List<string> _numberFlats = new List<string>{"1","b2","2","b3","3","4","b5","5","b6","6","b7","7"};
 	private static List<string> _numberSharps = new List<string>{"1","#1","2","#2","3","4","#4","5","#5","6","#6","7"};
+	private static List<string> _solfegeTwoOctaves = new List<string> ();
 
 	private string _solfegeFlat;
 	private string _solfegeSharp;
@@ -45,8 +46,13 @@ public class ScaleTone : MonoBehaviour {
 	public static List<string> NumberFlats {
 		get{ return _numberFlats.ToList (); }
 
-	}public static List<string> NumberSharps {
+	}
+	public static List<string> NumberSharps {
 		get{ return _numberSharps.ToList (); }
+
+	}
+	public static List<string> SolfegeTwoOctaves {
+		get{ return _solfegeTwoOctaves.ToList (); }
 
 	}
 		
@@ -61,8 +67,29 @@ public class ScaleTone : MonoBehaviour {
 
 	}
 
-	private static void SetSolfegeToExampleTuneDict()
+	static ScaleTone()
 	{
+		int numberOfOctaves = 2;
+		string octaveIndicator = "";
+
+		int i = 0;
+
+		//set tones for SolfegeTwoOctaves
+		while (i < numberOfOctaves) 
+		{
+			if(i==0)
+				octaveIndicator = Constants.lowerOctIndicator;
+			else if(i==1)
+				octaveIndicator = Constants.higherOctIndicator;
+
+			foreach (var solfege in SolfegeFlats) 
+			{
+				_solfegeTwoOctaves.Add (solfege + octaveIndicator);
+			}
+
+			i++;
+		}
+
 		_solfegeToExampleTune ["DO"] = new List<string>{"Somewhere, Over the Rainbow","Here Comes the Bride" };
 	
 	}
