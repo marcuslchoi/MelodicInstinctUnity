@@ -56,11 +56,14 @@ public class ScaleTone : MonoBehaviour {
 
 	}
 		
-	public ScaleTone (string solfegeFlat)
+	//TODO: CHANGE SOLFEGEFLAT TO GENERAL SOLFEGE (NOW IT HAS OCTAVE INDICATOR)
+	public ScaleTone (string solfegeWithOctave)
 	{
-		var solfIndex = SolfegeFlats.IndexOf (solfegeFlat);
+		var solfegeGeneral = Constants.RemoveLast (solfegeWithOctave);
 
-		SolfegeFlat = solfegeFlat;
+		var solfIndex = SolfegeFlats.IndexOf (solfegeGeneral);
+
+		SolfegeFlat = solfegeWithOctave;
 		SolfegeSharp = SolfegeSharps [solfIndex];
 		NumberFlat = NumberFlats [solfIndex];
 		NumberSharp = NumberSharps [solfIndex];

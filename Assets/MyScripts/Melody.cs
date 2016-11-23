@@ -48,7 +48,7 @@ public class Melody : MonoBehaviour {
 		//populate the notes using allnotesscale and solfstrings
 		foreach (var solfString in solfegeStrings) 
 		{
-			Notes.Add (AllNotesScale.MusicNotes.Find (n => n.Solfege.ToString () == solfString));
+			Notes.Add (AllNotesScale.MusicNotes.Find (n => n.TheScaleTone.SolfegeFlat == solfString));
 		}
 		SetToneClips ();
 		NoteBeats = noteBeats.ToList();
@@ -234,7 +234,7 @@ public class Melody : MonoBehaviour {
 		var possMusicNotes = new List<MusicNote>();
 		for(var j = 0; j < allMusicNotes.Count; j++)
 		{
-			var solfege = allMusicNotes [j].Solfege;
+			var solfege = allMusicNotes [j].TheScaleTone.SolfegeFlat;
 
 			if(scaleDegreesChosen.Contains(solfege))
 				possMusicNotes.Add(allMusicNotes[j]);

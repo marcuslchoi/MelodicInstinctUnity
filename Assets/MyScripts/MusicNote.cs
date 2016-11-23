@@ -13,7 +13,7 @@ public class MusicNote : MonoBehaviour {
 
 	private string _nameFlat;
 	private string _nameSharp;
-	private string _solfege;
+	private ScaleTone _theScaleTone;
 
 	//system calls this
 	static MusicNote()
@@ -41,7 +41,7 @@ public class MusicNote : MonoBehaviour {
 
 	public MusicNote(string solfege, string nameFlat)
 	{
-		Solfege = solfege;
+		TheScaleTone = new ScaleTone(solfege);
 		NameFlat = nameFlat;
 		NameSharp = MusicNote.FlatToSharp[nameFlat];
 
@@ -53,10 +53,10 @@ public class MusicNote : MonoBehaviour {
 //		NameFlat = nameFlat;
 //	}
 
-	public MusicNote (string solfegeString)
-	{
-		Solfege = solfegeString;
-	}
+//	public MusicNote (string solfegeString)
+//	{
+//		TheScaleTone = solfegeString;
+//	}
 
 	public static Dictionary<string,string> FlatToSharp 
 	{
@@ -90,10 +90,10 @@ public class MusicNote : MonoBehaviour {
 		set{ _nameSharp = value; }
 	}
 
-	public string Solfege
+	public ScaleTone TheScaleTone
 	{
-		get{ return _solfege; }
-		set{ _solfege = value; }
+		get{ return new ScaleTone(_theScaleTone.SolfegeFlat); }
+		private set{ _theScaleTone = value; }
 	}
 		
 }

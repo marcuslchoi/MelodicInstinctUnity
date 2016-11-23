@@ -49,7 +49,7 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 
 			isCorrectNote = false;
 
-			var currentSolf = melody.Notes [guesses].Solfege.ToString ();
+			var currentSolf = melody.Notes [guesses].TheScaleTone.SolfegeFlat;
 			var currentSolfGeneral = Constants.RemoveLast (currentSolf);
 
 			if (currentSolfGeneral == solfClicked)
@@ -70,7 +70,7 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 		var noteNameGeneral = Constants.RemoveLast (Note.NameFlat);
 		audioClip = Resources.Load<AudioClip> (noteNameGeneral+Constants.lowerOct);
 		//audioSource.clip = audioClip;
-		toneText.text = Constants.RemoveLast(Note.Solfege.ToString ());
+		toneText.text = Constants.RemoveLast(Note.TheScaleTone.SolfegeFlat);
 
 	}
 
