@@ -12,11 +12,17 @@ public class ScaleTone : MonoBehaviour {
 	private static List<string> _numberSharps = new List<string>{"1","#1","2","#2","3","4","#4","5","#5","6","#6","7"};
 	private static List<string> _solfegeTwoOctaves = new List<string> ();
 
+	private string _solfegeOctave;
 	private string _solfegeFlat;
 	private string _solfegeSharp;
 	private string _numberFlat;
 	private string _numberSharp;
 	private List<string> _exampleTunes = new List<string>();
+
+	public string SolfegeOctave {
+		get{ return _solfegeOctave; }
+		private set{ _solfegeOctave = value; }
+	}
 
 	public string SolfegeFlat {
 		get{ return _solfegeFlat; }
@@ -55,15 +61,15 @@ public class ScaleTone : MonoBehaviour {
 		get{ return _solfegeTwoOctaves.ToList (); }
 
 	}
-		
-	//TODO: CHANGE SOLFEGEFLAT TO GENERAL SOLFEGE (NOW IT HAS OCTAVE INDICATOR)
-	public ScaleTone (string solfegeWithOctave)
+
+	public ScaleTone (string solfegeOctave)
 	{
-		var solfegeGeneral = Constants.RemoveLast (solfegeWithOctave);
+		var solfegeGeneral = Constants.RemoveLast (solfegeOctave);
 
 		var solfIndex = SolfegeFlats.IndexOf (solfegeGeneral);
 
-		SolfegeFlat = solfegeWithOctave;
+		SolfegeOctave = solfegeOctave;
+		SolfegeFlat = solfegeGeneral;
 		SolfegeSharp = SolfegeSharps [solfIndex];
 		NumberFlat = NumberFlats [solfIndex];
 		NumberSharp = NumberSharps [solfIndex];

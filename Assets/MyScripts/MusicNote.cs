@@ -92,7 +92,7 @@ public class MusicNote : MonoBehaviour {
 
 	public ScaleTone TheScaleTone
 	{
-		get{ return new ScaleTone(_theScaleTone.SolfegeFlat); }
+		get{ return new ScaleTone(_theScaleTone.SolfegeOctave); }
 		private set{ _theScaleTone = value; }
 	}
 		

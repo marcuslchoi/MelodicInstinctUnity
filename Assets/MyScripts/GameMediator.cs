@@ -193,7 +193,7 @@ public class GameMediator : MonoBehaviour
 		foreach (var toneButton in ToneButtons) {
 
 			var playToneBtn = toneButton.GetComponent<PlayToneBtn> ();
-			var currentSolfege = currentMelody.Notes [guesses].TheScaleTone.SolfegeFlat;
+			var currentSolfege = currentMelody.Notes [guesses].TheScaleTone.SolfegeOctave;
 
 			if (currentSolfege.Contains (playToneBtn.toneText.text))
 				playToneBtn.SetAudioClip (currentMelody.ToneClips [guesses]);	
