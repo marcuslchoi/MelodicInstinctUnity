@@ -5,22 +5,14 @@ using System.Diagnostics;
 using System;
 using System.Text;
 
-//public enum ScaleDegree { DOl, RAl, REl, MEl, MIl, FAl, SEl, SOLl, LEl, LAl, TEl, TIl, DOh, RAh, REh, MEh, MIh, FAh, SEh, SOLh, LEh, LAh, TEh, TIh }
 public enum ScaleType { MAJOR, RELATIVE_MINOR, MELODIC_MINOR, HARMONIC_MINOR }
 
 public class Scale : MonoBehaviour {
 
 	//STATICS
 
-	public static List<string> Major = new List<string> ();
+	public static List<string> MajorTwoOctaves = new List<string> ();
 
-//		new List<ScaleDegree>
-//	{ScaleDegree.DOl,ScaleDegree.REl,ScaleDegree.MIl,ScaleDegree.FAl,ScaleDegree.SOLl,ScaleDegree.LAl,ScaleDegree.TIl,
-//		ScaleDegree.DOh,ScaleDegree.REh,ScaleDegree.MIh,ScaleDegree.FAh,ScaleDegree.SOLh,ScaleDegree.LAh,ScaleDegree.TIh };
-
-//	public static List<ScaleDegree> RelativeMinor = new List<ScaleDegree>
-//	{ScaleDegree.DOl,ScaleDegree.REl,ScaleDegree.MEl,ScaleDegree.FAl,ScaleDegree.SOLl,ScaleDegree.LEl,ScaleDegree.TEl, 
-//		ScaleDegree.DOh,ScaleDegree.REh,ScaleDegree.MEh,ScaleDegree.FAh,ScaleDegree.SOLh,ScaleDegree.LEh,ScaleDegree.TEh};
 
 	//DICTIONARY CONTAINING KEY: SCALE TYPES, VALUES: LIST OF SCALE DEGREES 
 	public static Dictionary<ScaleType, List<string>> TypeToDegrees = new Dictionary<ScaleType, List<string>>();
@@ -41,12 +33,12 @@ public class Scale : MonoBehaviour {
 
 			if (Constants.MAJOR_TONES.Contains (solfegeGeneral)) 
 			{
-				Major.Add (solfege);
+				MajorTwoOctaves.Add (solfege);
 			}
 			//TODO: OTHER SCALES
 		}
 
-		TypeToDegrees.Add (ScaleType.MAJOR, Major);
+		TypeToDegrees.Add (ScaleType.MAJOR, MajorTwoOctaves);
 			
 	}
 
@@ -98,7 +90,7 @@ public class Scale : MonoBehaviour {
 
 		int i;
 		int toneCount = 12;
-		var solfegeTwoOctaves = ScaleTone.SolfegeTwoOctaves; //Enum.GetNames(typeof(ScaleDegree));
+		var solfegeTwoOctaves = ScaleTone.SolfegeTwoOctaves;
 		var solfNoteDict = new Dictionary<string, string>();
 
 		string solfKeyStr;
