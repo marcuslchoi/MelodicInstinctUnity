@@ -5,7 +5,7 @@ using System.Linq;
 
 public class ScaleTone : MonoBehaviour {
 
-	private static Dictionary<string,List<string>> _solfegeToExampleTune = new Dictionary<string,List<string>> ();
+	private static Dictionary<string,List<string>> _solfegeToExampleTunes = new Dictionary<string,List<string>> ();
 	private static List<string> _solfegeFlats = new List<string>{"DO","RA","RE","ME","MI","FA","SE","SOL","LE","LA","TE","TI"};
 	private static List<string> _solfegeSharps = new List<string>{"DO","DI","RE","RI","MI","FA","FI","SOL","SI","LA","LI","TI"};
 	private static List<string> _numberFlats = new List<string>{"1","b2","2","b3","3","4","b5","5","b6","6","b7","7"};
@@ -17,7 +17,6 @@ public class ScaleTone : MonoBehaviour {
 	private string _solfegeSharp;
 	private string _numberFlat;
 	private string _numberSharp;
-	private List<string> _exampleTunes = new List<string>();
 
 	public string SolfegeOctave {
 		get{ return _solfegeOctave; }
@@ -62,6 +61,11 @@ public class ScaleTone : MonoBehaviour {
 
 	}
 
+	public static Dictionary<string,List<string>> SolfegeToExampleTunes {
+		get{ return _solfegeToExampleTunes; }	//TODO: SHALLOW COPY?
+		//set;
+	}
+
 	public ScaleTone (string solfegeOctave)
 	{
 		var solfegeGeneral = Constants.RemoveLast (solfegeOctave);
@@ -99,7 +103,7 @@ public class ScaleTone : MonoBehaviour {
 			i++;
 		}
 
-		_solfegeToExampleTune ["DO"] = new List<string>{"Somewhere, Over the Rainbow","Here Comes the Bride" };
+		_solfegeToExampleTunes ["DO"] = new List<string>{"Somewhere, Over the Rainbow","Here Comes the Bride" };
 	
 	}
 

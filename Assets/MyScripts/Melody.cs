@@ -17,7 +17,7 @@ public class Melody : MonoBehaviour {
 	private int _bigInterval = 10;
 	private int _smallInterval = 4;
 	private int _percentBigInterval = 20;
-
+	private string _name;
 
 	//note beats of 1 4/4 measure
 	private List<float> POSSBEATS = new List<float>{1f,1.5f,2f,2.5f,3f,3.5f,4f,4.5f};
@@ -39,8 +39,9 @@ public class Melody : MonoBehaviour {
 	}
 
 	//for example tunes
-	public Melody(string tonic, int tempoBPM, List<string> solfegeStrings, List<float> noteBeats)
+	public Melody(string name, string tonic, int tempoBPM, List<string> solfegeStrings, List<float> noteBeats)
 	{
+		Name = name;
 		
 		AllNotesScale = new Scale(tonic);
 		TempoBPM = tempoBPM;
@@ -65,6 +66,11 @@ public class Melody : MonoBehaviour {
 		Length = answerNotes.Count;
 
 		//NoteBeats = noteBeats;
+	}
+
+	public string Name {
+		get{ return _name; }
+		private set{ _name = value; }
 	}
 
 	public List<AudioClip> ToneClips {

@@ -301,13 +301,20 @@ public class GameMediator : MonoBehaviour
 
 	public void PlayTuneOnClick()
 	{
+		var currentSolfege = PlayToneBtn.solfClicked;
+
+		var tunesList = ScaleTone.SolfegeToExampleTunes[currentSolfege];
+
+		foreach (var tune1 in tunesList)
+			print (tune1);
+
 		var HereComesTheBrideSolf = new List<string>{"SOLl","DOh","DOh","DOh","SOLl","REh","TIl","DOh"};
 		var HereComesTheBrideNoteBeats = new List<float>{1f,2f,2.66f,3f,5f,6f,6.66f,7f};
 
 		var solfegeStrings = HereComesTheBrideSolf;
 		var noteBeats = HereComesTheBrideNoteBeats;
 
-		var tune = new Melody ("C", 100, solfegeStrings, noteBeats);
+		var tune = new Melody ("Here Comes Bride", "C", 100, solfegeStrings, noteBeats);
 		StartCoroutine(tune.Play ());
 	
 	}
