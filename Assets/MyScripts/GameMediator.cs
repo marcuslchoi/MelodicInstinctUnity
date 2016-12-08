@@ -46,7 +46,8 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		
+		ExampleMelodies.GenerateMelodies ();
+
 		BPMSlider.minValue = 30f;
 		BPMSlider.maxValue = 200f;
 		BPMSlider.value = 70f;
@@ -243,6 +244,16 @@ public class GameMediator : MonoBehaviour
 	bool isCorrectMelody;
 	private void ToneOnClick()
 	{
+		var tutorialMode = true;
+
+		if (tutorialMode) 
+		{
+			melodyIndex = 0;
+			//TODO: HIGHLIGHT THE SOLFEGE BUTTON PRESSED
+			ExampleMelodies.SetExampleMelodies (PlayToneBtn.solfClicked);
+
+		}
+
 		//only display wrong if within the guesses range of the melody
 		if (guesses < currentMelody.Notes.Count) 
 		{
@@ -270,8 +281,6 @@ public class GameMediator : MonoBehaviour
 					Feedback.text = "CORRECT!";
 					Feedback.color = Color.green;
 				}
-				
-				//StatsText.text = correctMelodies +"/"+ melodiesPlayed;
 			}
 
 		}
@@ -279,10 +288,6 @@ public class GameMediator : MonoBehaviour
 
 		if (guesses < currentMelody.Notes.Count) 
 			AssignAudioClipInCorrectOctave ();
-
-		ParseObject testObject = new ParseObject("testmongo");
-		testObject ["guesses"] = guesses;
-		testObject.SaveAsync();
 	}
 
 	IEnumerator FlashWrong()
@@ -298,17 +303,20 @@ public class GameMediator : MonoBehaviour
 		yield return new WaitForSeconds (flashOnTime);
 		Feedback.text = "";
 	}
-
+		
+	int melodyIndex = 0;
 	public void PlayTuneOnClick()
 	{
-		var currentSolfege = "DO";//PlayToneBtn.solfClicked;
+		var currentSolfege = PlayToneBtn.solfClicked;
 
 		var melodies = ExampleMelodies.SolfegeToMelodies[currentSolfege];
 
-		foreach (var melody in melodies)
-			print (melody.Name);
-		StartCoroutine (melodies[0].Play ());
+		StartCoroutine (melodies[melodyIndex].Play ());
 
+		if (melodyIndex == melodies.Count - 1)
+			melodyIndex = 0;
+		else
+			melodyIndex++;
 	}
 
 	#region settings

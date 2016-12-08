@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-//[RequireComponent(typeof(AudioSource))]
 public class PlayToneBtn : MonoBehaviour,IPointerDownHandler 
 {
 	public Text toneText;
@@ -62,14 +61,11 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 
 	}
 
-	// Use this for initialization
 	//TODO: CALL THIS PRIVATELY??
 	public void PopulateFields () {
 
-		//audioSource = GetComponent<AudioSource> ();
 		var noteNameGeneral = Constants.RemoveLast (Note.NameFlat);
 		audioClip = Resources.Load<AudioClip> (noteNameGeneral+Constants.lowerOct);
-		//audioSource.clip = audioClip;
 		toneText.text = Constants.RemoveLast(Note.TheScaleTone.SolfegeOctave);
 
 	}
