@@ -16,6 +16,8 @@ public class GameMediator : MonoBehaviour
 	public Slider MelodyLengthSlider;
 	public Text MelodyLengthText;
 	public Text TonicText;
+	public Button TutorialModeButton;
+	public Text TutorialModeText;
 
 	public GameObject Solfege3D;
 
@@ -42,6 +44,9 @@ public class GameMediator : MonoBehaviour
 	int melodyLength;// = 4;
 	int measures = 2;
 	int beatsPerMeasure = 4;
+	bool isTutorialMode = false;
+
+	string defaultTutorialSolfege = ScaleTone.SolfegeFlats [0];
 
 	// Use this for initialization
 	void Start () 
@@ -244,15 +249,6 @@ public class GameMediator : MonoBehaviour
 	bool isCorrectMelody;
 	private void ToneOnClick()
 	{
-		var tutorialMode = true;
-
-		if (tutorialMode) 
-		{
-			melodyIndex = 0;
-			//TODO: HIGHLIGHT THE SOLFEGE BUTTON PRESSED
-			ExampleMelodies.SetExampleMelodies (PlayToneBtn.solfClicked);
-
-		}
 
 		//only display wrong if within the guesses range of the melody
 		if (guesses < currentMelody.Notes.Count) 
@@ -348,5 +344,26 @@ public class GameMediator : MonoBehaviour
 		timer.Text.text = timer.Minutes + ":00";
 
 	}
+
+	public void TutorialModeOnClick()
+	{
+		isTutorialMode = !isTutorialMode;
+
+		string onOrOff;
+		if (isTutorialMode) 
+		{
+			melodyIndex = 0;
+			PlayToneBtn.solfClicked = defaultTutorialSolfege;
+			//TODO: HIGHLIGHT THE SOLFEGE BUTTON PRESSED
+			ExampleMelodies.SetExampleMelodies (PlayToneBtn.solfClicked);
+			onOrOff = "ON";
+		}
+		else
+			onOrOff = "OFF";
+
+		TutorialModeText.text = "TUTORIAL MODE: " + onOrOff;
+	
+	}
+
 	#endregion
 }

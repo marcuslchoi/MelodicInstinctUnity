@@ -39,6 +39,13 @@ public class ExampleMelodies : MonoBehaviour {
 	public static Melody somedayMyPrince;
 	public static Melody singinRain;
 
+	//la
+	//"The Hills Are Alive","What A Wonderful World","Kumbaya","Singin' in the Rain"
+	public static Melody wonderfulWorld;
+	public static Melody kumbaya;
+
+	//ti
+
 	static ExampleMelodies()
 	{
 		//initialize dictionary
@@ -161,12 +168,6 @@ public class ExampleMelodies : MonoBehaviour {
 		hillsAreAlive = new Melody(name, tonic, tempo, solfList, beatList);
 
 		//SOL FROM BELOW
-//		public static Melody williamTellTheme;
-//		public static Melody happyBday;
-//		public static Melody chopinNocturneOp9No2;
-//		public static Melody somedayMyPrince;
-//		public static Melody singinRain;
-
 		name = "William Tell Overture (Theme)";
 		tempo = 200;
 		solfList = new List<string>{ 
@@ -209,6 +210,19 @@ public class ExampleMelodies : MonoBehaviour {
 		beatList = new List<float>{ 1f,2f,3.5f,4,5f,5.5f};
 		singinRain = new Melody(name, tonic, tempo, solfList, beatList);
 
+		//la
+		name = "What a Wonderful World";
+		solfList = new List<string>{"SOLl","LAl","DOh","DOh","SOLh","LAh","LAh","LAh","SOLh"};
+		beatList = new List<float>{ 1f,1.5f,2f,3.5f,4f,6.5f,7f,7.5f,8f};
+		wonderfulWorld = new Melody(name, tonic, tempo, solfList, beatList);
+
+		name = "Kumbaya";
+		solfList = new List<string>{"DOh","MIh","SOLh","SOLh","SOLh","LAh","LAh","SOLh"};
+		beatList = new List<float>{ 1f,1.5f,2f,2.75f,3f,5f,5.5f,6f};
+		kumbaya = new Melody(name, tonic, tempo, solfList, beatList);
+
+		//todo: chopin waltz, han solo and the princess
+
 	}
 
 	public static void SetExampleMelodies(string solfege)
@@ -248,6 +262,10 @@ public class ExampleMelodies : MonoBehaviour {
 			else if (solfege == ScaleTone.SolfegeFlats [7]) 
 			{	
 				//["William Tell Overture", "Superman Theme Song", "Mighty Mouse Theme Song", "hills are alive"]
+				//"William Tell Overture (Theme)","Happy Birthday","Here Comes the Bride","Chopin Nocturne Op. 9 No 2","Someday My Prince Will Come","Chopin Waltz Op. 64 No 2","At Last","Singin' in the Rain","Han Solo and the Princess"]
+
+				SolfegeToMelodies [solfege] = new List<Melody>{williamTellIntro,superman,mightyMouse,hillsAreAlive,
+					williamTellTheme,happyBday,hereComes,chopinNocturneOp9No2,somedayMyPrince,singinRain};
 			}
 
 		}
