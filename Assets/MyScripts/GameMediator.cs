@@ -47,6 +47,7 @@ public class GameMediator : MonoBehaviour
 	bool isTutorialMode = false;
 
 	string defaultTutorialSolfege = ScaleTone.SolfegeFlats [0];
+	string defaultTonic = "C";
 
 	// Use this for initialization
 	void Start () 
@@ -68,6 +69,8 @@ public class GameMediator : MonoBehaviour
 
 		//TODO: GET THIS FROM OPTIONS
 		timer.Minutes = 2;
+
+		//PositionToneButtons (defaultTonic);
 	}
 
 	void GenerateNewMelody(string tonic)
@@ -342,6 +345,12 @@ public class GameMediator : MonoBehaviour
 
 		timer.Minutes = minutes;
 		timer.Text.text = timer.Minutes + ":00";
+
+	}
+
+	public void DrumsDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
+	{
+		print ("changed drums");
 
 	}
 
