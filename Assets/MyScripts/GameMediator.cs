@@ -265,41 +265,39 @@ public class GameMediator : MonoBehaviour
 	bool isCorrectMelody;
 	private void ToneOnClick()
 	{
-
-		//only display wrong if within the guesses range of the melody
-		if (guesses < currentMelody.Notes.Count) 
+		if (currentMelody != null) 
 		{
-			Renderer rend = Notes3D[guesses].GetComponentInChildren<Renderer>();
-
-			if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat)) 
-			{
-				isCorrectMelody = false;
-				Feedback.color = Color.red;
-				StartCoroutine (FlashWrong ());
-				rend.material.color=Color.red;
 			
-			} 
-			else 
-			{
-				Feedback.text = "";
-				rend.material.color = Color.green;
-			}
+			//only display wrong if within the guesses range of the melody
+			if (guesses < currentMelody.Notes.Count) {
+				Renderer rend = Notes3D [guesses].GetComponentInChildren<Renderer> ();
 
-			if (guesses == currentMelody.Notes.Count-1) 
-			{	
-				if (isCorrectMelody) 
-				{
-					correctMelodies++;
-					Feedback.text = "CORRECT!";
-					Feedback.color = Color.green;
+				if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat)) {
+					isCorrectMelody = false;
+					Feedback.color = Color.red;
+					StartCoroutine (FlashWrong ());
+					rend.material.color = Color.red;
+			
+				} else {
+					Feedback.text = "";
+					rend.material.color = Color.green;
 				}
+
+				if (guesses == currentMelody.Notes.Count - 1) {	
+					if (isCorrectMelody) {
+						correctMelodies++;
+						Feedback.text = "CORRECT!";
+						Feedback.color = Color.green;
+					}
+				}
+
 			}
+			guesses++;
+
+			if (guesses < currentMelody.Notes.Count)
+				AssignAudioClipInCorrectOctave ();
 
 		}
-		guesses++;
-
-		if (guesses < currentMelody.Notes.Count) 
-			AssignAudioClipInCorrectOctave ();
 	}
 
 	IEnumerator FlashWrong()

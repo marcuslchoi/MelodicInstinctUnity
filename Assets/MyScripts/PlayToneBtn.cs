@@ -34,7 +34,7 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 		var melody = GameMediator.currentMelody;
 		var guesses = GameMediator.guesses;
 
-		if (guesses < melody.Notes.Count) 
+		if (melody != null && guesses < melody.Notes.Count) 
 		{
 
 			var timeBeginAnswer = GameMediator.timeBeginAnswer;
