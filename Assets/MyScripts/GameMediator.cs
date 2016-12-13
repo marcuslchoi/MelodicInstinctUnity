@@ -70,12 +70,20 @@ public class GameMediator : MonoBehaviour
 		//TODO: GET THIS FROM OPTIONS
 		timer.Minutes = 2;
 
-		//PositionToneButtons (defaultTonic);
+		GenerateNewScale (tonic);
+		PositionToneButtons (tonic);
+	}
+
+	void GenerateNewScale(string tonic)
+	{
+		myScale = new Scale (tonic, ScaleType.MAJOR);
+	
 	}
 
 	void GenerateNewMelody(string tonic)
 	{
-		myScale = new Scale (tonic, ScaleType.MAJOR);
+		//TODO: USE THIS METHOD IF TONIC CHANGES BETWEEN QUESTIONS
+		//GenerateNewScale (tonic);
 		currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
 	
 	}
@@ -137,12 +145,17 @@ public class GameMediator : MonoBehaviour
 
 			previousKeyColor = keyColor;
 
-			//assign the music note to the button
-			var musicNote = myScale.MusicNotes [i + myScale.TonicIndex];
-			playToneBtn.Note = musicNote;
-			playToneBtn.PopulateFields ();
+			AssignMusicNoteToButton (i, playToneBtn);
 		}
 	
+	}
+
+	void AssignMusicNoteToButton (int i, PlayToneBtn playToneBtn)
+	{
+		//assign the music note to the button
+		var musicNote = myScale.MusicNotes [i + myScale.TonicIndex];
+		playToneBtn.Note = musicNote;
+		playToneBtn.PopulateFields ();
 	}
 
 	public void PlayButtonOnClick()
