@@ -18,6 +18,7 @@ public class GameMediator : MonoBehaviour
 	public Text TonicText;
 	public Button TutorialModeButton;
 	public Text TutorialModeText;
+	public Button PlayExampleMelody;
 
 	public GameObject Solfege3D;
 
@@ -30,6 +31,7 @@ public class GameMediator : MonoBehaviour
 
 	public Timer timer;
 	public Text GameLengthText;
+	public Text DrumsText;
 
 	public List<GameObject> Solfege3Ds;
 
@@ -45,6 +47,7 @@ public class GameMediator : MonoBehaviour
 	int measures = 2;
 	int beatsPerMeasure = 4;
 	bool isTutorialMode = false;
+	bool isDrumsGame = true;
 
 	string defaultTutorialSolfege = ScaleTone.SolfegeFlats [0];
 	string defaultTonic = "C";
@@ -72,6 +75,7 @@ public class GameMediator : MonoBehaviour
 
 		GenerateNewScale (tonic);
 		PositionToneButtons (tonic);
+
 	}
 
 	void GenerateNewScale(string tonic)
@@ -84,8 +88,13 @@ public class GameMediator : MonoBehaviour
 	{
 		//TODO: USE THIS METHOD IF TONIC CHANGES BETWEEN QUESTIONS
 		//GenerateNewScale (tonic);
-		currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
-	
+
+
+		if (isDrumsGame)
+			currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
+		else
+			currentMelody = new Melody (melodyLength, myScale, tempo);
+
 	}
 
 	//positions tone buttons and assigns note to each
@@ -161,6 +170,8 @@ public class GameMediator : MonoBehaviour
 	public void PlayButtonOnClick()
 	{
 		timer.StartTimer ();
+
+		//length of time of the melody before user can answer
 		var playtime = (float)Constants.SECONDS_PER_MIN/(float)tempo*(float)beatsPerMeasure*(float)measures;
 		InvokeRepeating ("PlayCurrentMelody", 0f, playtime*2f);
 	}
@@ -263,41 +274,36 @@ public class GameMediator : MonoBehaviour
 	int melodiesPlayed = 0;
 	int correctMelodies = 0;
 	bool isCorrectMelody;
-	private void ToneOnClick()
-	{
-		if (currentMelody != null) 
-		{
-			
-			//only display wrong if within the guesses range of the melody
-			if (guesses < currentMelody.Notes.Count) {
-				Renderer rend = Notes3D [guesses].GetComponentInChildren<Renderer> ();
+	public void ToneOnClick()
+	{		
+		//only display wrong if within the guesses range of the melody
+		if (guesses < currentMelody.Notes.Count) {
+			Renderer rend = Notes3D [guesses].GetComponentInChildren<Renderer> ();
 
-				if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat)) {
-					isCorrectMelody = false;
-					Feedback.color = Color.red;
-					StartCoroutine (FlashWrong ());
-					rend.material.color = Color.red;
-			
-				} else {
-					Feedback.text = "";
-					rend.material.color = Color.green;
-				}
-
-				if (guesses == currentMelody.Notes.Count - 1) {	
-					if (isCorrectMelody) {
-						correctMelodies++;
-						Feedback.text = "CORRECT!";
-						Feedback.color = Color.green;
-					}
-				}
-
+			if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat)) {
+				isCorrectMelody = false;
+				Feedback.color = Color.red;
+				StartCoroutine (FlashWrong ());
+				rend.material.color = Color.red;
+		
+			} else {
+				Feedback.text = "";
+				rend.material.color = Color.green;
 			}
-			guesses++;
 
-			if (guesses < currentMelody.Notes.Count)
-				AssignAudioClipInCorrectOctave ();
+			if (guesses == currentMelody.Notes.Count - 1) {	
+				if (isCorrectMelody) {
+					correctMelodies++;
+					Feedback.text = "CORRECT!";
+					Feedback.color = Color.green;
+				}
+			}
 
 		}
+		guesses++;
+
+		if (guesses < currentMelody.Notes.Count)
+			AssignAudioClipInCorrectOctave ();
 	}
 
 	IEnumerator FlashWrong()
@@ -317,7 +323,7 @@ public class GameMediator : MonoBehaviour
 	int melodyIndex = 0;
 	public void PlayTuneOnClick()
 	{
-		var currentSolfege = PlayToneBtn.solfClicked;
+		var currentSolfege = "DO";//PlayToneBtn.solfClicked;
 
 		var melodies = ExampleMelodies.SolfegeToMelodies[currentSolfege];
 
@@ -362,12 +368,15 @@ public class GameMediator : MonoBehaviour
 	public void DrumsDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
 	{
 		print ("changed drums");
+		if(DrumsText.text.Contains("OFF"))
+			isDrumsGame = false;
 
 	}
 
 	public void TutorialModeOnClick()
 	{
 		isTutorialMode = !isTutorialMode;
+		PlayExampleMelody.gameObject.SetActive (isTutorialMode);
 
 		string onOrOff;
 		if (isTutorialMode) 

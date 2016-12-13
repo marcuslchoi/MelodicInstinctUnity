@@ -18,13 +18,15 @@ public class Melody : MonoBehaviour {
 	private int _smallInterval = 4;
 	private int _percentBigInterval = 20;
 	private string _name;
+	private bool _hasRhythm;
 
 	//note beats of 1 4/4 measure
 	private List<float> POSSBEATS = new List<float>{1f,1.5f,2f,2.5f,3f,3.5f,4f,4.5f};
 
-
+	//with drums
 	public Melody(int length, Scale scale, int tempoBPM, int measures, int beatsPerMeasure)
 	{
+		HasRhythm = true;
 		Length = length;
 		AllNotesScale = scale;
 		TempoBPM = tempoBPM;
@@ -36,6 +38,22 @@ public class Melody : MonoBehaviour {
 
 		GenerateNoteBeats ();
 		SetTimesBetweenNotes ();
+	}
+
+	//without drums
+	public Melody(int length, Scale scale, int tempoBPM)
+	{
+		HasRhythm = false;
+		Length = length;
+		AllNotesScale = scale;
+		TempoBPM = tempoBPM;
+
+		GenerateMusicNotes();
+		SetToneClips ();
+
+		GenerateNoteBeats ();
+		SetTimesBetweenNotes ();
+
 	}
 
 	//for example tunes
@@ -66,6 +84,11 @@ public class Melody : MonoBehaviour {
 		Length = answerNotes.Count;
 
 		//NoteBeats = noteBeats;
+	}
+
+	public bool HasRhythm {
+		get{ return _hasRhythm; }
+		private set{ _hasRhythm = value; }
 	}
 
 	public string Name {
@@ -185,27 +208,36 @@ public class Melody : MonoBehaviour {
 	{
 		var beatIndices = new List<int> ();
 
-		var random = new System.Random();
+		if (HasRhythm) {
+			var random = new System.Random ();
 
-		for (var i = 0; i < Length; i++)
-		{
-			int beatIndex;
-			do
-			{
-				beatIndex = random.Next(POSSBEATS.Count);
+			for (var i = 0; i < Length; i++) {
+				int beatIndex;
+				do 
+				{
+					beatIndex = random.Next (POSSBEATS.Count);
+
+				} while (beatIndices.Contains (beatIndex));
+
+				beatIndices.Add (beatIndex);
+
 			}
-			while (beatIndices.Contains(beatIndex));
-
-			beatIndices.Add(beatIndex);
-
-		}
 		
-		beatIndices.Sort();
+			beatIndices.Sort ();
 
-		foreach (var beatIndex in beatIndices) 
+			foreach (var beatIndex in beatIndices) {
+				var beat = POSSBEATS [beatIndex];
+				NoteBeats.Add (beat);
+			}
+		} 
+		else //no drums
 		{
-			var beat = POSSBEATS [beatIndex];
-			NoteBeats.Add (beat);
+			for (var i = 1; i <= Length; i++) 
+			{
+				NoteBeats.Add ((float)i);
+			
+			}
+		
 		}
 	}
 
@@ -271,7 +303,6 @@ public class Melody : MonoBehaviour {
 
 		}
 
-		//SetToneClips ();
 	}
 
 }

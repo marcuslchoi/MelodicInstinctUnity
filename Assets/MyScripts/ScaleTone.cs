@@ -11,6 +11,7 @@ public class ScaleTone : MonoBehaviour {
 	private static List<string> _numberSharps = new List<string>{"1","#1","2","#2","3","4","#4","5","#5","6","#6","7"};
 	private static List<string> _solfegeTwoOctaves = new List<string> ();
 
+	//has octave indicator
 	private string _solfegeOctave;
 	private string _solfegeFlat;
 	private string _solfegeSharp;
