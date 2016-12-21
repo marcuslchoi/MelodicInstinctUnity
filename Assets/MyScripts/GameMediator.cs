@@ -20,8 +20,6 @@ public class GameMediator : MonoBehaviour
 	public Text TutorialModeText;
 	public Button PlayExampleMelody;
 
-	public GameObject Solfege3D;
-
 	MusicNote currentNote;
 
 	public static int guesses;
@@ -33,13 +31,13 @@ public class GameMediator : MonoBehaviour
 	public Text GameLengthText;
 	public Text DrumsText;
 
-	public List<GameObject> Solfege3Ds;
+	public List<GameObject> SolfegeAnimations;
 
 	public List<Button> ToneButtons;
 	public Text Feedback;
 	public Text StatsText;
 
-	Dictionary<string,GameObject> SolfToAnimation = new Dictionary<string,GameObject>();
+	Dictionary<string,GameObject> SolfegeToAnimation = new Dictionary<string,GameObject>();
 
 	string tonic;// = "C";
 	int tempo;// = 60;
@@ -55,6 +53,14 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		//populate solfege to animation dictionary
+		int i = 0;
+		foreach (var solfegeKey in ScaleTone.SolfegeFlats) 
+		{
+			SolfegeToAnimation [solfegeKey] = SolfegeAnimations [i];
+			i++;
+		}
+
 		ExampleMelodies.GenerateMelodies ();
 
 		BPMSlider.minValue = 30f;
@@ -119,6 +125,8 @@ public class GameMediator : MonoBehaviour
 		float buttonWidth = 2f * halfKey;
 		float distToLeft = 0; //+padding
 		float distToBottom;
+		string blackString = "box";
+		string whiteString = "white";
 
 		//this puts the tone keys in correct position depending on tonic
 		char previousKeyColor=' ';
@@ -132,11 +140,13 @@ public class GameMediator : MonoBehaviour
 			if (keyColor == 'W') 
 			{
 				distToBottom = buttonHeight * 0.5f;
+				playToneBtn.keyImage.overrideSprite = Resources.Load<Sprite> (whiteString);
+				playToneBtn.toneText.color = Color.black;
 			} 
 			else 
 			{
 				distToBottom = buttonHeight * 1.5f;
-				playToneBtn.keyImage.overrideSprite = Resources.Load<Sprite> ("box");
+				playToneBtn.keyImage.overrideSprite = Resources.Load<Sprite> (blackString);
 				playToneBtn.toneText.color = Color.white;
 			}
 
@@ -275,7 +285,14 @@ public class GameMediator : MonoBehaviour
 	int correctMelodies = 0;
 	bool isCorrectMelody;
 	public void ToneOnClick()
-	{		
+	{
+		foreach (var animation in SolfegeAnimations)
+			animation.SetActive (false);
+
+		//set the current solfege animation active
+		var currentSolfegeAnimation = SolfegeToAnimation[PlayToneBtn.solfClicked];
+		currentSolfegeAnimation.SetActive (true);
+
 		//only display wrong if within the guesses range of the melody
 		if (guesses < currentMelody.Notes.Count) {
 			Renderer rend = Notes3D [guesses].GetComponentInChildren<Renderer> ();
