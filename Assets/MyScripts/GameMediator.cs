@@ -47,12 +47,17 @@ public class GameMediator : MonoBehaviour
 	bool isTutorialMode = false;
 	bool isDrumsGame = true;
 
+	//audiosource of the drum track
+	AudioSource aSource;
+
 	string defaultTutorialSolfege = ScaleTone.SolfegeFlats [0];
 	string defaultTonic = "C";
 
 	// Use this for initialization
 	void Start () 
 	{
+		aSource = GetComponent<AudioSource>();
+
 		//populate solfege to animation dictionary
 		int i = 0;
 		foreach (var solfegeKey in ScaleTone.SolfegeFlats) 
@@ -94,7 +99,6 @@ public class GameMediator : MonoBehaviour
 	{
 		//TODO: USE THIS METHOD IF TONIC CHANGES BETWEEN QUESTIONS
 		//GenerateNewScale (tonic);
-
 
 		if (isDrumsGame)
 			currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
@@ -181,16 +185,21 @@ public class GameMediator : MonoBehaviour
 	{
 		timer.StartTimer ();
 
-		//length of time of the melody before user can answer
-		var playtime = (float)Constants.SECONDS_PER_MIN/(float)tempo*(float)beatsPerMeasure*(float)measures;
-		InvokeRepeating ("PlayCurrentMelody", 0f, playtime*2f);
+		if (isDrumsGame) {
+			//length of time of the melody before user can answer
+			var playtime = (float)Constants.SECONDS_PER_MIN / (float)tempo * (float)beatsPerMeasure * (float)measures;
+			InvokeRepeating ("PlayCurrentMelody", 0f, playtime * 2f);
+		} 
+		else 
+		{
+		
+			PlayCurrentMelody ();
+		}
+
 	}
 
-	public void PlayCurrentMelody()
+	void ResetForNewMelody()
 	{
-		if (timer.TimeLeft == 0)
-			CancelInvoke ("PlayCurrentMelody");
-		
 		guesses = 0;
 
 		//hide the 3d notes
@@ -201,22 +210,38 @@ public class GameMediator : MonoBehaviour
 			note3D.SetActive (false);
 		}
 		Feedback.text = "";
-		melodiesPlayed++;
+
 		isCorrectMelody = true;
 
-		//plays the drum track
-		AudioSource aSource = GetComponent<AudioSource>();
-		aSource.pitch = (float)tempo / Constants.SECONDS_PER_MIN;
-		aSource.Play ();
+		timeBeginAnswer = Time.time + currentMelody.Playtime;
+
+		StatsText.text = correctMelodies +"/"+ melodiesPlayed;
+	
+	}
+
+	public void PlayCurrentMelody()
+	{
+
+		if (timer.TimeLeft == 0)
+			CancelInvoke ("PlayCurrentMelody");
 
 		GenerateNewMelody (tonic);
 
-		//TODO: CALL THIS ONLY IF TONIC CHANGED, SEPARATE OUT LOGIC THAT ASSIGNS AUDIO CLIPS
+		ResetForNewMelody ();
+
+		melodiesPlayed++;
+
+		//plays the drum track at certain tempo
+		if (isDrumsGame) 
+		{
+			aSource.pitch = (float)tempo / Constants.SECONDS_PER_MIN;
+			aSource.Play ();
+		}
+
+		//TODO: CALL THIS ONLY IF TONIC CHANGED
 		PositionToneButtons (tonic);
 
 		AssignAudioClipInCorrectOctave ();
-
-		timeBeginAnswer = Time.time + currentMelody.Playtime;
 
 		//the beats
 		foreach (var beat in currentMelody.NoteBeats)
@@ -226,14 +251,13 @@ public class GameMediator : MonoBehaviour
 		StartCoroutine(currentMelody.Play ());
 		StartCoroutine (EnableNotes3D ());
 
-		StatsText.text = correctMelodies +"/"+ melodiesPlayed;
-
 	}
 
 	//assigns audio clip of the scale degree in the same octave as the current note
 	void AssignAudioClipInCorrectOctave()
 	{
-		foreach (var toneButton in ToneButtons) {
+		foreach (var toneButton in ToneButtons) 
+		{
 
 			var playToneBtn = toneButton.GetComponent<PlayToneBtn> ();
 			var currentSolfege = currentMelody.Notes [guesses].TheScaleTone.SolfegeOctave;
@@ -270,20 +294,42 @@ public class GameMediator : MonoBehaviour
 
 	public static float timeBeginAnswer;
 
-	IEnumerator EnableAnimatedGO(string solfege)
-	{
-		//print ("ENABLING "+solfege);
-		if (solfege == "DO") {
-			//gameObject.setenabled here
-		}
-
-		yield return null;
-	
-	}
-
 	int melodiesPlayed = 0;
 	int correctMelodies = 0;
 	bool isCorrectMelody;
+
+	bool CheckIfCorrectGuess()
+	{
+		bool isCorrectNote = false;
+		bool isCorrectBeat = false;
+		bool isCorrectGuess = false;
+
+		if (guesses < currentMelody.Notes.Count) 
+		{
+			//check if correct beat
+			//beat recorded in playtonebtn so its time is recorded on pointer down, not on click
+			float answerBeat = PlayToneBtn.answerBeat;
+			if (Mathf.Abs (answerBeat - currentMelody.NoteBeats [guesses]) < Constants.maxBeatDifference)
+				isCorrectBeat = true;
+
+			//check if correct note
+			var currentSolfege = currentMelody.Notes [guesses].TheScaleTone.SolfegeOctave;
+			if (currentSolfege.Contains(PlayToneBtn.solfClicked))
+				isCorrectNote = true;
+
+			print (isCorrectNote + " " + PlayToneBtn.solfClicked);
+			print (isCorrectBeat + "(" + answerBeat + ")");
+
+		}
+
+		if (isDrumsGame)
+			isCorrectGuess = isCorrectNote && isCorrectBeat;
+		else
+			isCorrectGuess = isCorrectNote;
+
+		return isCorrectGuess;
+	
+	}
 	public void ToneOnClick()
 	{
 		foreach (var animation in SolfegeAnimations)
@@ -293,11 +339,13 @@ public class GameMediator : MonoBehaviour
 		var currentSolfegeAnimation = SolfegeToAnimation[PlayToneBtn.solfClicked];
 		currentSolfegeAnimation.SetActive (true);
 
+		bool isCorrectGuess = CheckIfCorrectGuess ();
+
 		//only display wrong if within the guesses range of the melody
 		if (guesses < currentMelody.Notes.Count) {
 			Renderer rend = Notes3D [guesses].GetComponentInChildren<Renderer> ();
 
-			if (!(PlayToneBtn.isCorrectNote && PlayToneBtn.isCorrectBeat)) {
+			if (!(isCorrectGuess)) {
 				isCorrectMelody = false;
 				Feedback.color = Color.red;
 				StartCoroutine (FlashWrong ());
@@ -308,12 +356,16 @@ public class GameMediator : MonoBehaviour
 				rend.material.color = Color.green;
 			}
 
-			if (guesses == currentMelody.Notes.Count - 1) {	
-				if (isCorrectMelody) {
+			//guesses is the index of the last melody note
+			if (guesses == currentMelody.Notes.Count - 1) 
+			{	
+				if (isCorrectMelody) 
+				{
 					correctMelodies++;
 					Feedback.text = "CORRECT!";
 					Feedback.color = Color.green;
 				}
+					
 			}
 
 		}
@@ -321,6 +373,19 @@ public class GameMediator : MonoBehaviour
 
 		if (guesses < currentMelody.Notes.Count)
 			AssignAudioClipInCorrectOctave ();
+
+		//only pertains to non-drums game, generates and plays a new melody with delay
+		if (!isDrumsGame && guesses == currentMelody.Notes.Count) 
+		{
+			StartCoroutine(PlayCurrentMelodyWithDelay (currentMelody.TimePerBeat));
+
+		}
+	}
+
+	IEnumerator PlayCurrentMelodyWithDelay(float seconds)
+	{
+		yield return new WaitForSeconds(seconds);
+		PlayCurrentMelody ();
 	}
 
 	IEnumerator FlashWrong()

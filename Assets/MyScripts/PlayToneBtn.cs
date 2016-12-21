@@ -11,8 +11,7 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 	private AudioClip audioClip;
 
 	public static string solfClicked;
-	public static bool isCorrectNote;
-	public static bool isCorrectBeat;
+	public static float answerBeat;
 
 	public bool LearnMode {
 		get;
@@ -23,42 +22,15 @@ public class PlayToneBtn : MonoBehaviour,IPointerDownHandler
 		get;
 		set;
 	}
-
-	//TODO: MOVE (IN)CORRECT LOGIC TO GAME MEDIATOR
+		
 	public void OnPointerDown(PointerEventData data)
 	{
 		Constants.PlayClip (audioClip, Constants.origin);
 
 		solfClicked = toneText.text;
 
-		var melody = GameMediator.currentMelody;
-		var guesses = GameMediator.guesses;
-
-		if (guesses < melody.Notes.Count) 
-		{
-
-			var timeBeginAnswer = GameMediator.timeBeginAnswer;
-
-			isCorrectBeat = false;
-
-			float answerBeat = (Time.time - timeBeginAnswer) / melody.TimePerBeat + Constants.beatAdjustment;
-
-			if (Mathf.Abs (answerBeat - melody.NoteBeats [guesses]) < Constants.maxBeatDifference)
-				isCorrectBeat = true;
-
-			isCorrectNote = false;
-
-			var currentSolf = melody.Notes [guesses].TheScaleTone.SolfegeOctave;
-			var currentSolfGeneral = Constants.RemoveLast (currentSolf);
-
-			if (currentSolfGeneral == solfClicked)
-				isCorrectNote = true;
-
-			print (isCorrectNote + " " + solfClicked);
-			print (isCorrectBeat + "(" + answerBeat + ")");
-
-		}			
-
+		//this is here and not in game mediator so that it gets recorded on pointer down, not on click
+		answerBeat = (Time.time - GameMediator.timeBeginAnswer) / GameMediator.currentMelody.TimePerBeat + Constants.beatAdjustment;
 	}
 
 	//TODO: CALL THIS PRIVATELY??
