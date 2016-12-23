@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity3dAzure.AppServices;
 
 public class Constants : MonoBehaviour {
 
@@ -8,6 +9,9 @@ public class Constants : MonoBehaviour {
 	public static string lowerOctIndicator = MusicNote.NotesFlat[0].Substring(MusicNote.NotesFlat[0].Length-1); 
 	public static string higherOctIndicator = MusicNote.NotesFlat[totalTones].Substring(MusicNote.NotesFlat[totalTones].Length-1); 
 	public static int SECONDS_PER_MIN = 60;
+
+	public static MobileServiceClient Client;
+	public static MobileServiceTable<Highscore> HighScoresTable;
 
 	public static List<string> MAJOR_TONES = new List<string>{"DO","RE","MI","FA","SOL","LA","TI"};
 

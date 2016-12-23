@@ -4,6 +4,15 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using Parse;
 
+using System;
+using System.Net;
+using RestSharp;
+using Pathfinding.Serialization.JsonFx;
+using Unity3dAzure.AppServices;
+using Tacticsoft;
+using Prefabs;
+using UnityEngine.SceneManagement;
+
 //this is the view/controller
 public class GameMediator : MonoBehaviour
 {
@@ -39,6 +48,14 @@ public class GameMediator : MonoBehaviour
 
 	Dictionary<string,GameObject> SolfegeToAnimation = new Dictionary<string,GameObject>();
 
+	//Azure stuff
+	private string _appUrl = "http://melodicinstinct.azurewebsites.net";
+	private Highscore _score;
+	// App Service Rest Client
+	private MobileServiceClient _client;
+	// App Service Table defined using a DataModel
+	private MobileServiceTable<Highscore> _highScoresTable;
+
 	string tonic;// = "C";
 	int tempo;// = 60;
 	int melodyLength;// = 4;
@@ -56,6 +73,28 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		//from highscoresdemo
+
+		// Create App Service client (Using factory Create method to force 'https' url)
+		_client = MobileServiceClient.Create(_appUrl); //new MobileServiceClient(_appUrl);
+
+		// Get App Service 'Highscores' table
+		_highScoresTable = _client.GetTable<Highscore>("Highscores");
+
+		// set TSTableView delegate
+//		_tableView.dataSource = this;
+
+		// setup token using Unity Inspector value
+//		if (!String.IsNullOrEmpty(_facebookAccessToken))
+//		{
+//			InputField inputToken = GameObject.Find("FacebookAccessToken").GetComponent<InputField>();
+//			inputToken.text = _facebookAccessToken;
+//		}
+
+//		UpdateUI();
+
+		//end from highscoresdemo
+
 		aSource = GetComponent<AudioSource>();
 
 		//populate solfege to animation dictionary
@@ -81,8 +120,8 @@ public class GameMediator : MonoBehaviour
 		tempo = (int)BPMSlider.value;
 		melodyLength = (int)MelodyLengthSlider.value;
 
-		//TODO: GET THIS FROM OPTIONS
-		timer.Minutes = 2;
+		timer.Minutes = GetGameLength ();
+		DisplayInitialTimer ();
 
 		GenerateNewScale (tonic);
 		PositionToneButtons (tonic);
@@ -222,8 +261,12 @@ public class GameMediator : MonoBehaviour
 	public void PlayCurrentMelody()
 	{
 
-		if (timer.TimeLeft == 0)
+		if (timer.TimeLeft == 0) 
+		{
 			CancelInvoke ("PlayCurrentMelody");
+			Insert ();
+
+		}
 
 		GenerateNewMelody (tonic);
 
@@ -439,12 +482,22 @@ public class GameMediator : MonoBehaviour
 
 	public void GameLengthDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
 	{
+		timer.Minutes = GetGameLength();
+		DisplayInitialTimer ();
+	}
+
+	int GetGameLength()
+	{
 		var gameLengthTempArray = GameLengthText.text.Split (' ');
 		var minutes = int.Parse(gameLengthTempArray [0]);
 
-		timer.Minutes = minutes;
-		timer.Text.text = timer.Minutes + ":00";
+		return minutes;
+	}
 
+	void DisplayInitialTimer()
+	{
+		timer.Text.text = timer.Minutes + ":00";
+	
 	}
 
 	public void DrumsDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
@@ -476,5 +529,46 @@ public class GameMediator : MonoBehaviour
 	
 	}
 
+	#endregion
+
+	#region Azure
+	public void Insert()
+	{
+		Highscore score = GetScore ();
+
+		_highScoresTable.Insert<Highscore>(score, OnInsertCompleted);
+	}
+
+	private void OnInsertCompleted(IRestResponse<Highscore> response)
+	{
+		if (response.StatusCode == HttpStatusCode.Created)
+		{
+			Debug.Log( "OnInsertItemCompleted: " + response.Data );
+			Highscore item = response.Data; // if successful the item will have an 'id' property value
+			_score = item;
+		}
+		else
+		{
+			Debug.Log("Insert Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
+		}
+	}
+
+	private Highscore GetScore() 
+	{
+		string name = "This Is My Name";
+		int score = melodyLength * correctMelodies;
+//		string id = GameObject.Find("Id").GetComponent<Text> ().text;
+
+		Highscore highscore = new Highscore();
+		highscore.username = name;
+
+		highscore.score = score;
+
+//		if (!String.IsNullOrEmpty (id)) {
+//			highscore.id = id;
+//			Debug.Log ("Existing Id:" + id);
+//		}
+		return highscore;
+	}
 	#endregion
 }

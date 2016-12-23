@@ -184,6 +184,9 @@
  <Reference Include="Parse.Unity">
  <HintPath>/Users/marcuschoi/repos/MelodicInstinctUnity/Assets/Parse/Parse.Unity.dll</HintPath>
  </Reference>
+ <Reference Include="Pathfinding.JsonFx">
+ <HintPath>/Users/marcuschoi/repos/MelodicInstinctUnity/Assets/Azure/Plugins/Pathfinding.JsonFx.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
