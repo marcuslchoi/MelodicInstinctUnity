@@ -81,12 +81,7 @@ public class Scale : MonoBehaviour {
 
 	private void PopulateMusicNotes()
 	{
-
-		//TODO: = Tonic+lowerOctIndicator
-		StringBuilder tonicWithIndicator = new StringBuilder (Tonic);
-		tonicWithIndicator.Append (Constants.lowerOctIndicator);
-
-		TonicIndex = System.Array.IndexOf(MusicNote.NotesFlat, tonicWithIndicator.ToString());
+		TonicIndex = MusicNote.NotesGeneral.FindIndex (noteName => noteName == Tonic);
 
 		int i;
 		int toneCount = 12;

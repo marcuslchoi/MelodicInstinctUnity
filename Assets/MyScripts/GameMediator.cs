@@ -29,6 +29,11 @@ public class GameMediator : MonoBehaviour
 	public Text TutorialModeText;
 	public Button PlayExampleMelody;
 
+	[SerializeField]
+	private List<AudioClip> ClipsInCadenceRange;
+	[SerializeField]
+	private AudioClip B2Clip;
+
 	MusicNote currentNote;
 
 	public static int guesses;
@@ -137,9 +142,6 @@ public class GameMediator : MonoBehaviour
 
 	void GenerateNewMelody(string tonic)
 	{
-		//TODO: USE THIS METHOD IF TONIC CHANGES BETWEEN QUESTIONS
-		//GenerateNewScale (tonic);
-
 		if (isDrumsGame)
 			currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
 		else
@@ -242,7 +244,6 @@ public class GameMediator : MonoBehaviour
 			foreach(var clip in chordClips)
 				Constants.PlayClip (clip,Constants.origin);
 
-
 			yield return new WaitForSeconds (timeBetweenChords);
 		}
 
@@ -273,8 +274,8 @@ public class GameMediator : MonoBehaviour
 	{
 		//get the chord clips
 		var chordsClips = new List<List<AudioClip>> ();
-		foreach (var chordEnums in Cadences.Chords) {
-			var chordClips = GetAudioClipsForChord (chordEnums);
+		foreach (var solfEnums in Cadences.Chords) {
+			var chordClips = GetAudioClipsForChord (solfEnums);
 			chordsClips.Add (chordClips);
 		}
 
@@ -283,15 +284,25 @@ public class GameMediator : MonoBehaviour
 	}
 
 	//takes a chord in the form of solfege enums, returns its audio clips
-	private List<AudioClip> GetAudioClipsForChord(List<SolfEnum> chordEnums)
+	private List<AudioClip> GetAudioClipsForChord(List<SolfEnum> solfEnums)
 	{
-		var octave = 3;
 		List<AudioClip> chordClips = new List<AudioClip> ();
+		int indexOfClip;
+		AudioClip clip;
 
-		foreach (var chordEnum in chordEnums) 
+		foreach (var solfEnum in solfEnums) 
 		{
-			var noteNameGeneral = Constants.RemoveLast(myScale.MusicNotes [(int)chordEnum].NameFlat);
-			var clip = Resources.Load<AudioClip> (noteNameGeneral+octave);
+			if (solfEnum == SolfEnum.TI)
+				indexOfClip = myScale.TonicIndex - 1;
+			else
+				indexOfClip = (int)solfEnum + myScale.TonicIndex;
+
+			//case of TI in key of C
+			if (indexOfClip < 0)
+				clip = B2Clip;
+			else
+				clip = ClipsInCadenceRange [indexOfClip];
+			
 			chordClips.Add (clip);
 		}
 
@@ -334,6 +345,9 @@ public class GameMediator : MonoBehaviour
 			Insert ();
 
 		}
+
+		//TODO: CHECK IF TONIC CHANGES BETWEEN QUESTIONS
+		GenerateNewScale (tonic);
 
 		GenerateNewMelody (tonic);
 
@@ -544,6 +558,8 @@ public class GameMediator : MonoBehaviour
 	{
 		tonic = TonicText.text;
 		print ("new tonic: " + tonic);
+
+		GenerateNewScale (tonic);
 
 	}
 
