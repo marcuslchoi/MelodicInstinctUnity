@@ -65,7 +65,7 @@ public class GameMediator : MonoBehaviour
 	bool isDrumsGame = true;
 
 	//audiosource of the drum track
-	AudioSource aSource;
+	AudioSource audioSource;
 
 	string defaultTutorialSolfege = ScaleTone.SolfegeFlats [0];
 	string defaultTonic = "C";
@@ -95,7 +95,7 @@ public class GameMediator : MonoBehaviour
 
 		//end from highscoresdemo
 
-		aSource = GetComponent<AudioSource>();
+		audioSource = GetComponent<AudioSource>();
 
 		//populate solfege to animation dictionary
 		int i = 0;
@@ -219,9 +219,47 @@ public class GameMediator : MonoBehaviour
 		playToneBtn.Note = musicNote;
 		playToneBtn.PopulateFields ();
 	}
+		
+	IEnumerator PlayCadence()
+	{
+		var chordsClips = new List<List<AudioClip>> ();
+
+		foreach (var chordEnums in Cadences.Chords) {
+		
+			var chordClips = GetAudioClipsForChord (chordEnums);
+
+			chordsClips.Add (chordClips);
+		}
+
+		foreach (var chordClips in chordsClips) 
+		{		
+			foreach(var clip in chordClips)
+				Constants.PlayClip (clip,Constants.origin);
+
+			yield return new WaitForSeconds ((float)Constants.SECONDS_PER_MIN/(float)tempo);
+		}
+			
+	}
+
+	public List<AudioClip> GetAudioClipsForChord(List<SolfEnum> chordEnums)
+	{
+		var octave = 3;
+		List<AudioClip> chordClips = new List<AudioClip> ();
+
+		foreach (var chordEnum in chordEnums) 
+		{
+			var noteNameGeneral = Constants.RemoveLast(myScale.MusicNotes [(int)chordEnum].NameFlat);
+			var clip = Resources.Load<AudioClip> (noteNameGeneral+octave);
+			chordClips.Add (clip);
+		}
+
+		return chordClips;
+	}
 
 	public void PlayButtonOnClick()
 	{
+		StartCoroutine (PlayCadence ());
+
 		timer.StartTimer ();
 
 		if (isDrumsGame) {
@@ -230,8 +268,7 @@ public class GameMediator : MonoBehaviour
 			InvokeRepeating ("PlayCurrentMelody", 0f, playtime * 2f);
 		} 
 		else 
-		{
-		
+		{		
 			PlayCurrentMelody ();
 		}
 
@@ -263,6 +300,7 @@ public class GameMediator : MonoBehaviour
 
 		if (timer.TimeLeft == 0) 
 		{
+			audioSource.Stop ();
 			CancelInvoke ("PlayCurrentMelody");
 			Insert ();
 
@@ -277,8 +315,8 @@ public class GameMediator : MonoBehaviour
 		//plays the drum track at certain tempo
 		if (isDrumsGame) 
 		{
-			aSource.pitch = (float)tempo / Constants.SECONDS_PER_MIN;
-			aSource.Play ();
+			audioSource.pitch = (float)tempo / Constants.SECONDS_PER_MIN;
+			audioSource.Play ();
 		}
 
 		//TODO: CALL THIS ONLY IF TONIC CHANGED
