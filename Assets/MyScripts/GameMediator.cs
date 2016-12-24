@@ -121,6 +121,7 @@ public class GameMediator : MonoBehaviour
 		melodyLength = (int)MelodyLengthSlider.value;
 
 		timer.Minutes = GetGameLength ();
+
 		DisplayInitialTimer ();
 
 		GenerateNewScale (tonic);
@@ -219,29 +220,70 @@ public class GameMediator : MonoBehaviour
 		playToneBtn.Note = musicNote;
 		playToneBtn.PopulateFields ();
 	}
-		
-	IEnumerator PlayCadence()
+
+	public void PlayButtonOnClick()
 	{
-		var chordsClips = new List<List<AudioClip>> ();
+		correctMelodies = 0;
+		melodiesPlayed = 0;
+		UpdateStatsText ();
 
-		foreach (var chordEnums in Cadences.Chords) {
-		
-			var chordClips = GetAudioClipsForChord (chordEnums);
+		StartCoroutine (PlayCadenceThenStartGame ());
 
-			chordsClips.Add (chordClips);
-		}
+	}
 
+	IEnumerator PlayCadenceThenStartGame()
+	{
+		var chordsClips = GetChordsClipsForCadence ();
+		float timeBetweenChords = (float)Constants.SECONDS_PER_MIN / (float)tempo / 2f;
+
+		//play the chord clips
 		foreach (var chordClips in chordsClips) 
 		{		
 			foreach(var clip in chordClips)
 				Constants.PlayClip (clip,Constants.origin);
 
-			yield return new WaitForSeconds ((float)Constants.SECONDS_PER_MIN/(float)tempo);
+
+			yield return new WaitForSeconds (timeBetweenChords);
 		}
-			
+
+		//start the game
+		StartCoroutine (StartGame ());
+
 	}
 
-	public List<AudioClip> GetAudioClipsForChord(List<SolfEnum> chordEnums)
+	IEnumerator StartGame()
+	{
+		timer.StartTimer ();
+
+		if (isDrumsGame) {
+			//length of time of the melody before user can answer
+			var playtime = (float)Constants.SECONDS_PER_MIN / (float)tempo * (float)beatsPerMeasure * (float)measures;
+			InvokeRepeating ("PlayCurrentMelody", 0f, playtime * 2f);
+		} 
+		else //no drums game
+		{		
+			//plays first melody. This is called again when each question is answered
+			PlayCurrentMelody ();
+		}
+
+		yield return null;
+	}
+
+	private List<List<AudioClip>> GetChordsClipsForCadence()
+	{
+		//get the chord clips
+		var chordsClips = new List<List<AudioClip>> ();
+		foreach (var chordEnums in Cadences.Chords) {
+			var chordClips = GetAudioClipsForChord (chordEnums);
+			chordsClips.Add (chordClips);
+		}
+
+		return chordsClips;
+	
+	}
+
+	//takes a chord in the form of solfege enums, returns its audio clips
+	private List<AudioClip> GetAudioClipsForChord(List<SolfEnum> chordEnums)
 	{
 		var octave = 3;
 		List<AudioClip> chordClips = new List<AudioClip> ();
@@ -254,24 +296,6 @@ public class GameMediator : MonoBehaviour
 		}
 
 		return chordClips;
-	}
-
-	public void PlayButtonOnClick()
-	{
-		StartCoroutine (PlayCadence ());
-
-		timer.StartTimer ();
-
-		if (isDrumsGame) {
-			//length of time of the melody before user can answer
-			var playtime = (float)Constants.SECONDS_PER_MIN / (float)tempo * (float)beatsPerMeasure * (float)measures;
-			InvokeRepeating ("PlayCurrentMelody", 0f, playtime * 2f);
-		} 
-		else 
-		{		
-			PlayCurrentMelody ();
-		}
-
 	}
 
 	void ResetForNewMelody()
@@ -291,8 +315,13 @@ public class GameMediator : MonoBehaviour
 
 		timeBeginAnswer = Time.time + currentMelody.Playtime;
 
-		StatsText.text = correctMelodies +"/"+ melodiesPlayed;
+		UpdateStatsText ();
 	
+	}
+
+	void UpdateStatsText()
+	{
+		StatsText.text = correctMelodies +"/"+ melodiesPlayed;	
 	}
 
 	public void PlayCurrentMelody()
@@ -540,9 +569,13 @@ public class GameMediator : MonoBehaviour
 
 	public void DrumsDropdownOnValueChanged(UnityEngine.UI.Dropdown dropdown)
 	{
+		//TODO: DIFFERENT BEATS
+
 		print ("changed drums");
-		if(DrumsText.text.Contains("OFF"))
+		if (DrumsText.text.Contains ("OFF"))
 			isDrumsGame = false;
+		else
+			isDrumsGame = true;
 
 	}
 
