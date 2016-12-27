@@ -29,6 +29,9 @@ public class GameMediator : MonoBehaviour
 	public Text TutorialModeText;
 	public Button PlayExampleMelody;
 
+	public GameObject LeaderboardListItemPF;
+	public Transform LeaderboardTableContentTransform;
+
 	[SerializeField]
 	private List<AudioClip> ClipsInCadenceRange;
 	[SerializeField]
@@ -60,12 +63,14 @@ public class GameMediator : MonoBehaviour
 	private MobileServiceClient _client;
 	// App Service Table defined using a DataModel
 	private MobileServiceTable<Highscore> _highScoresTable;
+	private uint _skip = 0; // no of records to skip
 
 	// infinite scroll vars
 //	private bool _isPaginated = false; // only enable infinite scrolling for paginated results
 
 	// List of highscores (leaderboard)
 	private List<Highscore> _scores = new List<Highscore>();
+	private const uint _noPageResults = 50;
 
 	string tonic;// = "C";
 	int tempo;// = 60;
@@ -84,6 +89,7 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		
 		//from highscoresdemo
 
 		// Create App Service client (Using factory Create method to force 'https' url)
@@ -91,6 +97,8 @@ public class GameMediator : MonoBehaviour
 
 		// Get App Service 'Highscores' table
 		_highScoresTable = _client.GetTable<Highscore>("Highscores");
+
+		GetAllHighscores ();
 
 		// set TSTableView delegate
 //		_tableView.dataSource = this;
@@ -666,6 +674,7 @@ public class GameMediator : MonoBehaviour
 		return highscore;
 	}
 
+	//just reads all highscores in the order that they are stored
 	public void Read()
 	{
 		_highScoresTable.Read<Highscore>(OnReadCompleted);
@@ -690,10 +699,117 @@ public class GameMediator : MonoBehaviour
 		}
 	}
 
+	//call this to get high scores with scores descending
+	public void GetAllHighscores()
+	{
+		// reset
+		_skip = 0;
+		GetPageHighscores();
+	}
+
+	private void GetPageHighscores()
+	{
+		CustomQuery query = new CustomQuery("", "score desc", _noPageResults, _skip, "id,username,score,scale");
+		_highScoresTable.Query<NestedResults<Highscore>>(query, OnReadNestedResultsCompleted);
+	}
+
+	private void OnReadNestedResultsCompleted(IRestResponse<NestedResults<Highscore>> response)
+	{
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Debug.Log("OnReadNestedResultsCompleted: " + response.ResponseUri +" data: "+ response.Content);
+			List<Highscore> items = response.Data.results;
+//			_totalCount = response.Data.count;
+			Debug.Log("Read items count: " + items.Count + "/" + response.Data.count);
+//			_isPaginated = true; // nested query will support pagination
+			if (_skip != 0) {
+				_scores.AddRange (items); // append results for paginated results
+			} else {
+				_scores = items; // set for first page of results
+			}
+//			HasNewData = true;
+
+			DisplayScores ();
+		}
+		else
+		{
+			Debug.Log("Read Nested Results Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
+		}
+//		_isLoadingNextPage = false; // allows next page to be loaded
+	}
+
+	public void GetTopHighscores()
+	{
+		DateTime today = DateTime.Today;
+		string day = today.ToString("s");
+		string filter = string.Format("createdAt gt '{0}Z'", day);
+		Debug.Log ("filter:" + filter);
+		string orderBy = "score desc";
+		CustomQuery query = new CustomQuery(filter,orderBy,10);
+		Query(query);
+	}
+
+	public void GetUsernameHighscore()
+	{
+		Highscore score = GetScore ();
+		string filter = string.Format("username eq '{0}'", score.username);
+		string orderBy = "score desc";
+		CustomQuery query = new CustomQuery(filter,orderBy);
+		Query(query);
+	}
+
+	private void Query(CustomQuery query)
+	{
+		_highScoresTable.Query<Highscore>(query, OnReadCompleted);
+	}
+
 	void DisplayScores()
 	{
 		foreach (var highscore in _scores)
 			print (highscore.username + " has " + highscore.score);
+
+
 	}
+		
+
+	public void RefreshList ()
+	{
+
+//		foreach(GameObject gObject in GUIInstances){
+//			Destroy (gObject);
+//		}
+//		GUIInstances.Clear ();
+
+//		RectTransform scrollTarget = null;
+//		int lastRank = -1;
+
+		for(int i=0;i<_scores.Count;i++)
+		{
+			var score = _scores[i];
+//			if (entry.Position != lastRank+1){AddDotDotDot();}
+			GameObject newObject = Instantiate (LeaderboardListItemPF);
+			newObject.transform.SetParent (LeaderboardTableContentTransform, false);
+			LeaderboardListItem listItem = newObject.GetComponent<LeaderboardListItem>();
+			listItem.SetData (score,i+1);
+//			if(entry.PlayFabId == PlayFabDataStore.PlayFabId){ //This is me!
+//				scrollTarget = listItem.GetComponent<RectTransform>();
+//				listItem.Highlight ();
+//				//MC EDIT
+//				listItem.OnlineText.text = "ONLINE";
+//				listItem.OnlineImage.gameObject.SetActive (true);
+//
+//			}
+//			lastRank = entry.Position;
+//			GUIInstances.Add (newObject);
+
+
+		}
+
+//		if(scrollTarget != null){
+//			SnapTo (scrollTarget);
+//		}
+
+	}
+		
 	#endregion
 }
