@@ -61,6 +61,12 @@ public class GameMediator : MonoBehaviour
 	// App Service Table defined using a DataModel
 	private MobileServiceTable<Highscore> _highScoresTable;
 
+	// infinite scroll vars
+//	private bool _isPaginated = false; // only enable infinite scrolling for paginated results
+
+	// List of highscores (leaderboard)
+	private List<Highscore> _scores = new List<Highscore>();
+
 	string tonic;// = "C";
 	int tempo;// = 60;
 	int melodyLength;// = 4;
@@ -651,11 +657,43 @@ public class GameMediator : MonoBehaviour
 
 		highscore.score = score;
 
+		highscore.scale = myScale.Type.ToString();
+
 //		if (!String.IsNullOrEmpty (id)) {
 //			highscore.id = id;
 //			Debug.Log ("Existing Id:" + id);
 //		}
 		return highscore;
+	}
+
+	public void Read()
+	{
+		_highScoresTable.Read<Highscore>(OnReadCompleted);
+	}
+
+	private void OnReadCompleted(IRestResponse<List<Highscore>> response)
+	{
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Debug.Log("OnReadCompleted data: " + response.ResponseUri +" data: "+ response.Content);
+			List<Highscore> items = response.Data;
+			Debug.Log("Read items count: " + items.Count);
+//			_isPaginated = false; // default query has max. of 50 records and is not paginated so disable infinite scroll 
+			_scores = items;
+//			HasNewData = true;
+
+			DisplayScores ();
+		}
+		else
+		{
+			Debug.Log("Read Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
+		}
+	}
+
+	void DisplayScores()
+	{
+		foreach (var highscore in _scores)
+			print (highscore.username + " has " + highscore.score);
 	}
 	#endregion
 }

@@ -11,6 +11,8 @@ public class Highscore : DataModel
 	public string username { get; set; }
 
 	public int score { get; set; }
+
+	public string scale {get; set;}
 	
 	public override string ToString()
 	{
