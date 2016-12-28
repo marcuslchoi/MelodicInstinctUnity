@@ -27,7 +27,9 @@ public class GameMediator : MonoBehaviour
 	public Text TonicText;
 	public Button TutorialModeButton;
 	public Text TutorialModeText;
+	public Text MovingTonicText;
 	public Button PlayExampleMelody;
+	public GameObject LeaderboardPanel;
 
 	public GameObject LeaderboardListItemPF;
 	public Transform LeaderboardTableContentTransform;
@@ -79,6 +81,7 @@ public class GameMediator : MonoBehaviour
 	int beatsPerMeasure = 4;
 	bool isTutorialMode = false;
 	bool isDrumsGame = true;
+	bool isMovingTonic = false;
 
 	//audiosource of the drum track
 	AudioSource audioSource;
@@ -143,18 +146,19 @@ public class GameMediator : MonoBehaviour
 
 		DisplayInitialTimer ();
 
-		GenerateNewScale (tonic);
-		PositionToneButtons (tonic);
+		GenerateNewScale ();
+		PositionToneButtons ();
 
 	}
 
-	void GenerateNewScale(string tonic)
+	void GenerateNewScale()
 	{
+		
 		myScale = new Scale (tonic, ScaleType.MAJOR);
 	
 	}
 
-	void GenerateNewMelody(string tonic)
+	void GenerateNewMelody()
 	{
 		if (isDrumsGame)
 			currentMelody = new Melody (melodyLength, myScale, tempo, measures, beatsPerMeasure);
@@ -164,7 +168,7 @@ public class GameMediator : MonoBehaviour
 	}
 
 	//positions tone buttons and assigns note to each
-	void PositionToneButtons(string tonic)
+	void PositionToneButtons()
 	{
 		foreach (var toneButton in ToneButtons)
 			toneButton.onClick.RemoveAllListeners ();
@@ -361,9 +365,9 @@ public class GameMediator : MonoBehaviour
 		}
 
 		//TODO: CHECK IF TONIC CHANGES BETWEEN QUESTIONS
-		GenerateNewScale (tonic);
+		GenerateNewScale ();
 
-		GenerateNewMelody (tonic);
+		GenerateNewMelody ();
 
 		ResetForNewMelody ();
 
@@ -377,7 +381,7 @@ public class GameMediator : MonoBehaviour
 		}
 
 		//TODO: CALL THIS ONLY IF TONIC CHANGED
-		PositionToneButtons (tonic);
+		PositionToneButtons ();
 
 		AssignAudioClipInCorrectOctave ();
 
@@ -388,6 +392,12 @@ public class GameMediator : MonoBehaviour
 		StartCoroutine (TempDisableToneButtons ());
 		StartCoroutine(currentMelody.Play ());
 		StartCoroutine (EnableNotes3D ());
+
+		if (isMovingTonic) 
+		{
+			int tonicIndex = UnityEngine.Random.Range (0, MusicNote.NotesGeneral.Count);
+			tonic = MusicNote.NotesGeneral [tonicIndex];
+		}
 
 	}
 
@@ -573,7 +583,7 @@ public class GameMediator : MonoBehaviour
 		tonic = TonicText.text;
 		print ("new tonic: " + tonic);
 
-		GenerateNewScale (tonic);
+		GenerateNewScale ();
 
 	}
 
@@ -628,6 +638,20 @@ public class GameMediator : MonoBehaviour
 
 		TutorialModeText.text = "TUTORIAL MODE: " + onOrOff;
 	
+	}
+
+	public void MovingTonicOnClick()
+	{
+		isMovingTonic = !isMovingTonic;
+
+		string onOrOff;
+		if (isMovingTonic) 
+			onOrOff = "ON";
+		else
+			onOrOff = "OFF";
+
+		MovingTonicText.text = "MOVING TONIC: " + onOrOff;
+
 	}
 
 	#endregion
@@ -774,6 +798,7 @@ public class GameMediator : MonoBehaviour
 
 	public void RefreshList ()
 	{
+		LeaderboardPanel.SetActive (true);
 
 //		foreach(GameObject gObject in GUIInstances){
 //			Destroy (gObject);
