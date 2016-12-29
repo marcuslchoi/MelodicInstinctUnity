@@ -34,6 +34,8 @@ public class GameMediator : MonoBehaviour
 	public GameObject LeaderboardListItemPF;
 	public Transform LeaderboardTableContentTransform;
 
+	public Button LoginFacebook;
+
 	[SerializeField]
 	private List<AudioClip> ClipsInCadenceRange;
 	[SerializeField]
@@ -66,6 +68,9 @@ public class GameMediator : MonoBehaviour
 	// App Service Table defined using a DataModel
 	private MobileServiceTable<Highscore> _highScoresTable;
 	private uint _skip = 0; // no of records to skip
+
+	private Message _message; //used for login
+	private string _facebookAccessToken = "EAAWvQZA2tZASsBADDA2kjWPZCtgFxFSPzzd7vUvZCrwwdfGEvgZBPJ8BOkxxCdWjgTZA1vo5La0HzTJwpAeQaphsUpsTzmZA79VPrgvslv7RnZBvlKLWKKuZCtoKlBDokxEXHLKIq5ZBr11okLZAA4lMoqbqJF201B1RoFRb2Y125KabQZDZD";
 
 	// infinite scroll vars
 //	private bool _isPaginated = false; // only enable infinite scrolling for paginated results
@@ -657,6 +662,32 @@ public class GameMediator : MonoBehaviour
 	#endregion
 
 	#region Azure
+
+
+	public void Login()
+	{
+		_client.Login(MobileServiceAuthenticationProvider.Facebook, _facebookAccessToken, OnLoginCompleted);
+	}
+
+	private void OnLoginCompleted(IRestResponse<MobileServiceUser> response)
+	{
+		Debug.Log("Status: " + response.StatusCode + " Uri:" + response.ResponseUri );
+		Debug.Log("OnLoginCompleted: " + response.Content );
+
+		if ( response.StatusCode == HttpStatusCode.OK)
+		{
+			MobileServiceUser mobileServiceUser = response.Data;
+			_client.User = mobileServiceUser;
+			Debug.Log("Authorized UserId: " + _client.User.user.userId );
+
+		}
+		else
+		{
+			Debug.Log("Authorization Error: " + response.StatusCode);
+			_message = Message.Create ("Login failed", "Error");
+		}
+	}
+
 	public void Insert()
 	{
 		Highscore score = GetScore ();
