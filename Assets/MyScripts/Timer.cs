@@ -34,7 +34,7 @@ public class Timer : MonoBehaviour {
 		TimeLeft = Minutes * Constants.SECONDS_PER_MIN;
 
 		//TODO: REMOVE THIS AFTER TESTING!!
-		TimeLeft = 10;
+		//TimeLeft = 10;
 
 		int oneSecond = 1;
 		int timesUp = 0;

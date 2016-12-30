@@ -71,7 +71,7 @@ public class GameMediator : MonoBehaviour
 	private uint _skip = 0; // no of records to skip
 
 	private Message _message; //used for login
-	private string _facebookAccessToken = "EAAWvQZA2tZASsBADDA2kjWPZCtgFxFSPzzd7vUvZCrwwdfGEvgZBPJ8BOkxxCdWjgTZA1vo5La0HzTJwpAeQaphsUpsTzmZA79VPrgvslv7RnZBvlKLWKKuZCtoKlBDokxEXHLKIq5ZBr11okLZAA4lMoqbqJF201B1RoFRb2Y125KabQZDZD";
+	private string _facebookAccessToken = "";
 
 	// infinite scroll vars
 //	private bool _isPaginated = false; // only enable infinite scrolling for paginated results
@@ -251,6 +251,7 @@ public class GameMediator : MonoBehaviour
 
 	public void PlayButtonOnClick()
 	{
+		PlayButton.enabled = false;
 		correctMelodies = 0;
 		melodiesPlayed = 0;
 		UpdateStatsText ();
@@ -366,6 +367,7 @@ public class GameMediator : MonoBehaviour
 
 		if (timer.TimeLeft == 0) 
 		{
+			PlayButton.enabled = true;
 			audioSource.Stop ();
 			CancelInvoke ("PlayCurrentMelody");
 			Insert ();
