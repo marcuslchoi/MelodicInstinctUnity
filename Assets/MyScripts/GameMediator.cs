@@ -12,6 +12,7 @@ using Unity3dAzure.AppServices;
 using Tacticsoft;
 using Prefabs;
 using UnityEngine.SceneManagement;
+using Facebook.Unity;
 
 //this is the view/controller
 public class GameMediator : MonoBehaviour
@@ -97,7 +98,9 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		
+		//TODO: ERASE THIS BEFORE RELEASE
+		UserData.FirstName = "TEST";
+
 		//from highscoresdemo
 
 		// Create App Service client (Using factory Create method to force 'https' url)
@@ -692,7 +695,8 @@ public class GameMediator : MonoBehaviour
 	{
 		Highscore score = GetScore ();
 
-		_highScoresTable.Insert<Highscore>(score, OnInsertCompleted);
+		if(score != null)
+			_highScoresTable.Insert<Highscore>(score, OnInsertCompleted);
 	}
 
 	private void OnInsertCompleted(IRestResponse<Highscore> response)
@@ -711,7 +715,10 @@ public class GameMediator : MonoBehaviour
 
 	private Highscore GetScore() 
 	{
-		string name = "This Is My Name";
+		if (String.IsNullOrEmpty (UserData.FirstName))
+			return null;
+				
+		string name = UserData.FirstName+" "+UserData.LastName;
 		int score = melodyLength * correctMelodies;
 //		string id = GameObject.Find("Id").GetComponent<Text> ().text;
 
@@ -826,7 +833,7 @@ public class GameMediator : MonoBehaviour
 
 	}
 		
-
+	//TODO: REFRESH WHENEVER THERE IS A NEW HIGH SCORE
 	public void RefreshList ()
 	{
 		LeaderboardPanel.SetActive (true);
@@ -868,4 +875,5 @@ public class GameMediator : MonoBehaviour
 	}
 		
 	#endregion
+
 }

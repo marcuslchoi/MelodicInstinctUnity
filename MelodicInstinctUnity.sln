@@ -5,6 +5,8 @@ Project("{87BE8B41-CE1B-B27E-EE07-EB1070D517CF}") = "MelodicInstinctUnity", "Ass
 EndProject
 Project("{87BE8B41-CE1B-B27E-EE07-EB1070D517CF}") = "MelodicInstinctUnity", "Assembly-CSharp.csproj", "{8BA3F5D1-E75E-6C6F-7AD9-D51FB0700CF9}"
 EndProject
+Project("{87BE8B41-CE1B-B27E-EE07-EB1070D517CF}") = "MelodicInstinctUnity", "Assembly-CSharp-Editor.csproj", "{6BF226B1-4D46-FC3C-70B9-4FF415792126}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{8BA3F5D1-E75E-6C6F-7AD9-D51FB0700CF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BA3F5D1-E75E-6C6F-7AD9-D51FB0700CF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BA3F5D1-E75E-6C6F-7AD9-D51FB0700CF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BF226B1-4D46-FC3C-70B9-4FF415792126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BF226B1-4D46-FC3C-70B9-4FF415792126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BF226B1-4D46-FC3C-70B9-4FF415792126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BF226B1-4D46-FC3C-70B9-4FF415792126}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
