@@ -62,8 +62,8 @@ public class FBScript : MonoBehaviour {
 
 	void DealWithFBMenus(bool isLoggedIn)
 	{
-		DialogLoggedIn.SetActive (isLoggedIn);
-		DialogLoggedOut.SetActive (!isLoggedIn);
+//		DialogLoggedIn.SetActive (isLoggedIn);
+//		DialogLoggedOut.SetActive (!isLoggedIn);
 
 		if (isLoggedIn) 
 		{
@@ -90,7 +90,7 @@ public class FBScript : MonoBehaviour {
 		if (result.Texture != null) {
 
 			UserData.ProfilePicSprite=Sprite.Create (result.Texture, new Rect (0, 0, 128, 128), new Vector2 ());
-			ProfilePic.sprite = UserData.ProfilePicSprite;
+//			ProfilePic.sprite = UserData.ProfilePicSprite;
 
 		} else {
 		}

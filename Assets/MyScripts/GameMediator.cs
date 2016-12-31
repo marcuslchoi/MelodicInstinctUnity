@@ -668,7 +668,7 @@ public class GameMediator : MonoBehaviour
 
 	#region Azure
 
-
+/*
 	public void Login()
 	{
 		_client.Login(MobileServiceAuthenticationProvider.Facebook, _facebookAccessToken, OnLoginCompleted);
@@ -692,7 +692,7 @@ public class GameMediator : MonoBehaviour
 			_message = Message.Create ("Login failed", "Error");
 		}
 	}
-
+*/
 	public void Insert()
 	{
 		Highscore score = GetScore ();
