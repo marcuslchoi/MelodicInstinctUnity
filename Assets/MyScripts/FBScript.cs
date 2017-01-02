@@ -54,13 +54,13 @@ public class FBScript : MonoBehaviour {
 			if (FB.IsLoggedIn) {
 				Debug.Log ("fb is logged in");
 				UserData.FBAccessToken = AccessToken.CurrentAccessToken.TokenString;
-				SceneManager.LoadScene ("Game");
 
 			}
 			else
 				Debug.Log ("fb is not logged in");
 		
 			DealWithFBMenus (FB.IsLoggedIn);
+			LoadGameScene ();
 		}
 		
 	}
@@ -75,6 +75,12 @@ public class FBScript : MonoBehaviour {
 			FB.API ("/me?fields=first_name,last_name", HttpMethod.GET, DisplayUsername);
 			FB.API ("/me/picture?type=square&height=128&width=128", HttpMethod.GET, DisplayProfilePic);
 		}
+
+	}
+
+	void LoadGameScene()
+	{
+		SceneManager.LoadScene ("Game");
 	}
 
 	void DisplayUsername(IResult result)
@@ -99,6 +105,7 @@ public class FBScript : MonoBehaviour {
 
 		} else {
 		}
-	
+
+
 	}
 }
