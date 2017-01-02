@@ -3,6 +3,7 @@ using System.Collections;
 using Facebook.Unity;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class FBScript : MonoBehaviour {
 
@@ -44,12 +45,16 @@ public class FBScript : MonoBehaviour {
 	}
 	void AuthCallBack(IResult result)
 	{
+		//TODO: POP UP ON ERROR
+
 		if (result.Error != null)
 			print ("error " + result.Error);
 		else {
 
 			if (FB.IsLoggedIn) {
 				Debug.Log ("fb is logged in");
+				UserData.FBAccessToken = AccessToken.CurrentAccessToken.TokenString;
+				SceneManager.LoadScene ("Game");
 
 			}
 			else

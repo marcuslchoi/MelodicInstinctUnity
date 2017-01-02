@@ -98,13 +98,18 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		//TODO: ERASE THIS BEFORE RELEASE
-		UserData.FirstName = "TEST";
 
 		//from highscoresdemo
 
 		// Create App Service client (Using factory Create method to force 'https' url)
 		_client = MobileServiceClient.Create(_appUrl); //new MobileServiceClient(_appUrl);
+
+		if (FB.IsLoggedIn) {
+			FBLoginToAzure ();
+		}
+		else
+			//TODO: ERASE THIS BEFORE RELEASE
+			UserData.FirstName = "TEST";
 
 		// Get App Service 'Highscores' table
 		_highScoresTable = _client.GetTable<Highscore>("Highscores");
@@ -251,6 +256,7 @@ public class GameMediator : MonoBehaviour
 
 	public void PlayButtonOnClick()
 	{
+
 		PlayButton.enabled = false;
 		correctMelodies = 0;
 		melodiesPlayed = 0;
@@ -668,10 +674,10 @@ public class GameMediator : MonoBehaviour
 
 	#region Azure
 
-/*
-	public void Login()
+
+	public void FBLoginToAzure()
 	{
-		_client.Login(MobileServiceAuthenticationProvider.Facebook, _facebookAccessToken, OnLoginCompleted);
+		_client.Login(MobileServiceAuthenticationProvider.Facebook, UserData.FBAccessToken, OnLoginCompleted);
 	}
 
 	private void OnLoginCompleted(IRestResponse<MobileServiceUser> response)
@@ -692,7 +698,7 @@ public class GameMediator : MonoBehaviour
 			_message = Message.Create ("Login failed", "Error");
 		}
 	}
-*/
+
 	public void Insert()
 	{
 		Highscore score = GetScore ();
