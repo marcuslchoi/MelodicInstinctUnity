@@ -20,8 +20,8 @@ public class Timer : MonoBehaviour {
 
 	void Start () 
 	{
-		Text.text = string.Format ("{0}:00", Minutes);
-
+		//Text.text = string.Format ("{0}:00", Minutes);
+		Reset();
 	}
 
 	public void StartTimer()
@@ -29,12 +29,20 @@ public class Timer : MonoBehaviour {
 		StartCoroutine (UpdateTimerText ());
 	}
 
+	public void Reset()
+	{
+		StopAllCoroutines();
+		TimeLeft = Minutes * Constants.SECONDS_PER_MIN;
+		Text.text = string.Format ("{0}:00", Minutes);
+	
+	}
+
 	IEnumerator UpdateTimerText()
 	{
 		TimeLeft = Minutes * Constants.SECONDS_PER_MIN;
 
 		//TODO: REMOVE THIS AFTER TESTING!!
-		TimeLeft = 10;
+		//TimeLeft = 10;
 
 		int oneSecond = 1;
 		int timesUp = 0;

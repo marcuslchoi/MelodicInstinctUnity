@@ -19,6 +19,7 @@ public class GameMediator : MonoBehaviour
 {
 
 	public Button PlayButton;
+	public Button StopButton;
 	public Camera CameraCanvas;
 	public List<GameObject> Notes3D;
 	public Slider BPMSlider;
@@ -98,7 +99,7 @@ public class GameMediator : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-
+		StopButton.enabled = false;
 		//from highscoresdemo
 
 		// Create App Service client (Using factory Create method to force 'https' url)
@@ -254,16 +255,35 @@ public class GameMediator : MonoBehaviour
 		playToneBtn.PopulateFields ();
 	}
 
-	public void PlayButtonOnClick()
+	private void ResetForNewGame()
 	{
-
-		PlayButton.enabled = false;
 		correctMelodies = 0;
 		melodiesPlayed = 0;
+	
+	}
+
+	public void PlayButtonOnClick()
+	{
+		StopButton.enabled = true;
+		PlayButton.enabled = false;
+
+		ResetForNewGame ();
 		UpdateStatsText ();
 
 		StartCoroutine (PlayCadenceThenStartGame ());
 
+	}
+
+	public void StopButtonOnClick()
+	{
+		StopButton.enabled = false;
+		PlayButton.enabled = true;
+		ResetForNewGame ();
+
+		timer.Reset ();
+		CancelInvoke ("PlayCurrentMelody");
+		audioSource.Stop ();
+	
 	}
 
 	IEnumerator PlayCadenceThenStartGame()
@@ -374,6 +394,7 @@ public class GameMediator : MonoBehaviour
 		if (timer.TimeLeft == 0) 
 		{
 			PlayButton.enabled = true;
+			StopButton.enabled = false;
 			audioSource.Stop ();
 			CancelInvoke ("PlayCurrentMelody");
 			Insert ();
