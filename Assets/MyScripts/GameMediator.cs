@@ -69,7 +69,9 @@ public class GameMediator : MonoBehaviour
 	private MobileServiceClient _client;
 	// App Service Table defined using a DataModel
 	private MobileServiceTable<Highscore> _highScoresTable;
+	private MobileServiceTable<User> _usersTable;
 	private uint _skip = 0; // no of records to skip
+	private User _user;
 
 	private Message _message; //used for login
 	private string _facebookAccessToken = "";
@@ -105,6 +107,7 @@ public class GameMediator : MonoBehaviour
 		// Create App Service client (Using factory Create method to force 'https' url)
 		_client = MobileServiceClient.Create(_appUrl); //new MobileServiceClient(_appUrl);
 
+		//LOGIN TO AZURE
 		if (FB.IsLoggedIn) {
 			FBLoginToAzure ();
 		}
@@ -116,6 +119,7 @@ public class GameMediator : MonoBehaviour
 		_highScoresTable = _client.GetTable<Highscore>("Highscores");
 
 		GetAllHighscores ();
+		GetPlayersWithUsername ("Marcus Choi");
 
 		// set TSTableView delegate
 //		_tableView.dataSource = this;
@@ -695,6 +699,15 @@ public class GameMediator : MonoBehaviour
 
 	#region Azure
 
+	//get all usernames that match
+	public void GetPlayersWithUsername(string username)
+	{
+		//Highscore score = GetScore ();
+		string filter = string.Format("username eq '{0}'", username);
+		string orderBy = "username desc";
+		CustomQuery query = new CustomQuery(filter,orderBy);
+		Query(query);
+	}
 
 	public void FBLoginToAzure()
 	{
@@ -712,12 +725,23 @@ public class GameMediator : MonoBehaviour
 			_client.User = mobileServiceUser;
 			Debug.Log("Authorized UserId: " + _client.User.user.userId );
 
+			_user = new User {
+				Id = _client.User.user.userId,
+				FirstName = UserData.FirstName,
+				LastName = UserData.LastName
+			};
 		}
 		else
 		{
 			Debug.Log("Authorization Error: " + response.StatusCode);
 			_message = Message.Create ("Login failed", "Error");
 		}
+	}
+
+	private void InsertNewUser()
+	{
+	
+	
 	}
 
 	public void Insert()
@@ -766,10 +790,10 @@ public class GameMediator : MonoBehaviour
 	}
 
 	//just reads all highscores in the order that they are stored
-	public void Read()
-	{
-		_highScoresTable.Read<Highscore>(OnReadCompleted);
-	}
+//	public void Read()
+//	{
+//		_highScoresTable.Read<Highscore>(OnReadCompleted);
+//	}
 
 	private void OnReadCompleted(IRestResponse<List<Highscore>> response)
 	{
@@ -779,10 +803,13 @@ public class GameMediator : MonoBehaviour
 			List<Highscore> items = response.Data;
 			Debug.Log("Read items count: " + items.Count);
 //			_isPaginated = false; // default query has max. of 50 records and is not paginated so disable infinite scroll 
-			_scores = items;
+			var usernameScores = items;
+
+			foreach (var highscore in items)
+				print (highscore.username+" "+highscore.id);
 //			HasNewData = true;
 
-			DisplayScores ();
+			//DisplayScores ();
 		}
 		else
 		{
@@ -811,7 +838,7 @@ public class GameMediator : MonoBehaviour
 			Debug.Log("OnReadNestedResultsCompleted: " + response.ResponseUri +" data: "+ response.Content);
 			List<Highscore> items = response.Data.results;
 //			_totalCount = response.Data.count;
-			Debug.Log("Read items count: " + items.Count + "/" + response.Data.count);
+			Debug.Log("Read nested items count: " + items.Count + "/" + response.Data.count);
 //			_isPaginated = true; // nested query will support pagination
 			if (_skip != 0) {
 				_scores.AddRange (items); // append results for paginated results
