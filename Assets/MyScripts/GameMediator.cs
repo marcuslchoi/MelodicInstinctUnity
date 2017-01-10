@@ -117,6 +117,7 @@ public class GameMediator : MonoBehaviour
 
 		// Get App Service 'Highscores' table
 		_highScoresTable = _client.GetTable<Highscore>("Highscores");
+		_usersTable = _client.GetTable<User>("Users");
 
 		GetAllHighscores ();
 		GetPlayersWithUsername ("Marcus Choi");
@@ -726,10 +727,14 @@ public class GameMediator : MonoBehaviour
 			Debug.Log("Authorized UserId: " + _client.User.user.userId );
 
 			_user = new User {
-				Id = _client.User.user.userId,
+				UserId = _client.User.user.userId,
 				FirstName = UserData.FirstName,
 				LastName = UserData.LastName
+				//FriendIds=new List<string>{"id1","id2"}
 			};
+
+			//query the users table to see if user is already in DB. If not, calls insertnewuser
+			GetUserFromUsersTable ();
 		}
 		else
 		{
@@ -738,10 +743,26 @@ public class GameMediator : MonoBehaviour
 		}
 	}
 
-	private void InsertNewUser()
+	public void InsertNewUser()
 	{
+
+		if (_user != null) {
+			_usersTable.Insert<User> (_user, OnInsertUserCompleted);
+		}
 	
-	
+	}
+
+	private void OnInsertUserCompleted(IRestResponse<User> response)
+	{
+		if (response.StatusCode == HttpStatusCode.Created)
+		{
+			Debug.Log( "OnInsertUserCompleted: " + response.Data );
+			User item = response.Data; // if successful the item will have an 'id' property value
+		}
+		else
+		{
+			Debug.Log("Insert User Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
+		}
 	}
 
 	public void Insert()
@@ -756,7 +777,7 @@ public class GameMediator : MonoBehaviour
 	{
 		if (response.StatusCode == HttpStatusCode.Created)
 		{
-			Debug.Log( "OnInsertItemCompleted: " + response.Data );
+			Debug.Log( "OnInsertCompleted: " + response.Data );
 			Highscore item = response.Data; // if successful the item will have an 'id' property value
 			_score = item;
 		}
@@ -881,11 +902,48 @@ public class GameMediator : MonoBehaviour
 		_highScoresTable.Query<Highscore>(query, OnReadCompleted);
 	}
 
+	private void GetUserFromUsersTable()
+	{
+		string filter = string.Format("UserId eq '{0}'", _user.UserId);
+		CustomQuery query = new CustomQuery(filter);
+		UserQuery(query);
+	
+	}
+
+	private void UserQuery(CustomQuery query)
+	{
+		_usersTable.Query<User> (query, OnUserReadCompleted);
+	
+	}
+		
+	private void OnUserReadCompleted(IRestResponse<List<User>> response)
+	{
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Debug.Log("OnUserReadCompleted data: " + response.ResponseUri +" data: "+ response.Content);
+			List<User> items = response.Data;
+			Debug.Log("Read items count: " + items.Count);
+			//			_isPaginated = false; // default query has max. of 50 records and is not paginated so disable infinite scroll 
+
+			if (items.Count >= 1) 
+			{
+				print ("user is already in Database");
+			
+			} else {
+
+				InsertNewUser ();
+			}
+		}
+		else
+		{
+			Debug.Log("Read Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
+		}
+	}
+
 	void DisplayScores()
 	{
 		foreach (var highscore in _scores)
 			print (highscore.username + " has " + highscore.score);
-
 
 	}
 		
@@ -928,6 +986,10 @@ public class GameMediator : MonoBehaviour
 //			SnapTo (scrollTarget);
 //		}
 
+	}
+	public void CloseLeaderboardOnClick()
+	{
+		LeaderboardPanel.SetActive (false);
 	}
 		
 	#endregion

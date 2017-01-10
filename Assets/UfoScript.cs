@@ -31,6 +31,8 @@ public class UfoScript : MonoBehaviour {
 	private float _speedRotate=100f;
 	void Update () {
 
+		//TODO: MAKE SURE UFO DOESN'T BLOCK CAMERA!!!
+
 		x++;
 		if (x % 20 == 0) 
 		{

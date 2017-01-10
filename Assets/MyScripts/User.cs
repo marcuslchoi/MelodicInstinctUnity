@@ -1,12 +1,15 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System;
+using Unity3dAzure.AppServices;
 
-public class User : MonoBehaviour {
+[CLSCompliant(false)]
+public class User : DataModel 
+{
 
-	public string Id {
-		get;
-		set;
-	}
+	public string UserId {get;set;}
+
+	//public List<string> FriendIds {get;set;}
 
 	public string FirstName{ get; set;}
 	public string LastName{ get; set;}
