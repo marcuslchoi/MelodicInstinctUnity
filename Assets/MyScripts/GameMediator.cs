@@ -120,7 +120,7 @@ public class GameMediator : MonoBehaviour
 		_usersTable = _client.GetTable<User>("Users");
 
 		GetAllHighscores ();
-		GetPlayersWithUsername ("Marcus Choi");
+		GetUsersWithUsername ("Marcus","Choi");
 
 		// set TSTableView delegate
 //		_tableView.dataSource = this;
@@ -700,16 +700,6 @@ public class GameMediator : MonoBehaviour
 
 	#region Azure
 
-	//get all usernames that match
-	public void GetPlayersWithUsername(string username)
-	{
-		//Highscore score = GetScore ();
-		string filter = string.Format("username eq '{0}'", username);
-		string orderBy = "username desc";
-		CustomQuery query = new CustomQuery(filter,orderBy);
-		Query(query);
-	}
-
 	public void FBLoginToAzure()
 	{
 		_client.Login(MobileServiceAuthenticationProvider.Facebook, UserData.FBAccessToken, OnLoginCompleted);
@@ -734,7 +724,7 @@ public class GameMediator : MonoBehaviour
 			};
 
 			//query the users table to see if user is already in DB. If not, calls insertnewuser
-			GetUserFromUsersTable ();
+			GetUserWithUserId ();
 		}
 		else
 		{
@@ -743,13 +733,89 @@ public class GameMediator : MonoBehaviour
 		}
 	}
 
+	//get all usernames that match
+	public void GetUsersWithUsername(string firstName, string lastName)
+	{
+		string filter = string.Format("FirstName eq '{0}' and LastName eq '{1}'", firstName,lastName);
+
+		//TODO: ORDER BY DATE ADDED
+		string orderBy = "FirstName desc";
+		CustomQuery query = new CustomQuery(filter,orderBy);
+		QueryWithUsername(query);
+	}
+
+	private void QueryWithUsername(CustomQuery query)
+	{
+		_usersTable.Query<User> (query, OnUsernameReadCompleted);
+
+	}
+
+	private void OnUsernameReadCompleted(IRestResponse<List<User>> response)
+	{
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Debug.Log("OnUsernameReadCompleted data: " + response.ResponseUri +" data: "+ response.Content);
+			List<User> items = response.Data;
+
+			if (items.Count >= 1) 
+			{
+				print ("There are "+items.Count+" users with that name");
+
+			} else 
+			{
+
+				print ("The user you searched for does not exist");
+			}
+		}
+		else
+		{
+			Debug.Log("Read Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
+		}
+	}
+
+	private void GetUserWithUserId()
+	{
+		string filter = string.Format("UserId eq '{0}'", _user.UserId);
+		CustomQuery query = new CustomQuery(filter);
+		QueryWithUserId(query);
+
+	}
+
+	private void QueryWithUserId(CustomQuery query)
+	{
+		_usersTable.Query<User> (query, OnUserIdReadCompleted);
+
+	}
+
+	private void OnUserIdReadCompleted(IRestResponse<List<User>> response)
+	{
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Debug.Log("OnUserReadCompleted data: " + response.ResponseUri +" data: "+ response.Content);
+			List<User> items = response.Data;
+			Debug.Log("Read items count: " + items.Count);
+			//			_isPaginated = false; // default query has max. of 50 records and is not paginated so disable infinite scroll 
+
+			if (items.Count >= 1) 
+			{
+				print ("user is already in Database");
+
+			} else {
+
+				InsertNewUser ();
+			}
+		}
+		else
+		{
+			Debug.Log("Read Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
+		}
+	}
+
 	public void InsertNewUser()
 	{
-
 		if (_user != null) {
 			_usersTable.Insert<User> (_user, OnInsertUserCompleted);
 		}
-	
 	}
 
 	private void OnInsertUserCompleted(IRestResponse<User> response)
@@ -757,7 +823,7 @@ public class GameMediator : MonoBehaviour
 		if (response.StatusCode == HttpStatusCode.Created)
 		{
 			Debug.Log( "OnInsertUserCompleted: " + response.Data );
-			User item = response.Data; // if successful the item will have an 'id' property value
+			User item = response.Data;
 		}
 		else
 		{
@@ -794,7 +860,6 @@ public class GameMediator : MonoBehaviour
 				
 		string name = UserData.FirstName+" "+UserData.LastName;
 		int score = melodyLength * correctMelodies;
-//		string id = GameObject.Find("Id").GetComponent<Text> ().text;
 
 		Highscore highscore = new Highscore();
 		highscore.username = name;
@@ -803,10 +868,6 @@ public class GameMediator : MonoBehaviour
 
 		highscore.scale = myScale.Type.ToString();
 
-//		if (!String.IsNullOrEmpty (id)) {
-//			highscore.id = id;
-//			Debug.Log ("Existing Id:" + id);
-//		}
 		return highscore;
 	}
 
@@ -902,48 +963,10 @@ public class GameMediator : MonoBehaviour
 		_highScoresTable.Query<Highscore>(query, OnReadCompleted);
 	}
 
-	private void GetUserFromUsersTable()
-	{
-		string filter = string.Format("UserId eq '{0}'", _user.UserId);
-		CustomQuery query = new CustomQuery(filter);
-		UserQuery(query);
-	
-	}
-
-	private void UserQuery(CustomQuery query)
-	{
-		_usersTable.Query<User> (query, OnUserReadCompleted);
-	
-	}
-		
-	private void OnUserReadCompleted(IRestResponse<List<User>> response)
-	{
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Debug.Log("OnUserReadCompleted data: " + response.ResponseUri +" data: "+ response.Content);
-			List<User> items = response.Data;
-			Debug.Log("Read items count: " + items.Count);
-			//			_isPaginated = false; // default query has max. of 50 records and is not paginated so disable infinite scroll 
-
-			if (items.Count >= 1) 
-			{
-				print ("user is already in Database");
-			
-			} else {
-
-				InsertNewUser ();
-			}
-		}
-		else
-		{
-			Debug.Log("Read Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
-		}
-	}
-
 	void DisplayScores()
 	{
-		foreach (var highscore in _scores)
-			print (highscore.username + " has " + highscore.score);
+//		foreach (var highscore in _scores)
+//			print (highscore.username + " has " + highscore.score);
 
 	}
 		
