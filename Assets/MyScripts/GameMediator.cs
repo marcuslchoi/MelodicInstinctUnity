@@ -72,8 +72,8 @@ public class GameMediator : MonoBehaviour
 	private MobileServiceTable<User> _usersTable;
 	private uint _skip = 0; // no of records to skip
 	private User _user;
-
 	private Message _message; //used for login
+
 	private string _facebookAccessToken = "";
 
 	// infinite scroll vars
@@ -109,7 +109,7 @@ public class GameMediator : MonoBehaviour
 
 		//LOGIN TO AZURE
 		if (FB.IsLoggedIn) {
-			FBLoginToAzure ();
+//			FBLoginToAzure ();
 		}
 		else
 			//TODO: ERASE THIS BEFORE RELEASE
@@ -121,18 +121,6 @@ public class GameMediator : MonoBehaviour
 
 		GetAllHighscores ();
 		GetUsersWithUsername ("Marcus","Choi");
-
-		// set TSTableView delegate
-//		_tableView.dataSource = this;
-
-		// setup token using Unity Inspector value
-//		if (!String.IsNullOrEmpty(_facebookAccessToken))
-//		{
-//			InputField inputToken = GameObject.Find("FacebookAccessToken").GetComponent<InputField>();
-//			inputToken.text = _facebookAccessToken;
-//		}
-
-//		UpdateUI();
 
 		//end from highscoresdemo
 
@@ -700,38 +688,7 @@ public class GameMediator : MonoBehaviour
 
 	#region Azure
 
-	public void FBLoginToAzure()
-	{
-		_client.Login(MobileServiceAuthenticationProvider.Facebook, UserData.FBAccessToken, OnLoginCompleted);
-	}
 
-	private void OnLoginCompleted(IRestResponse<MobileServiceUser> response)
-	{
-		Debug.Log("Status: " + response.StatusCode + " Uri:" + response.ResponseUri );
-		Debug.Log("OnLoginCompleted: " + response.Content );
-
-		if ( response.StatusCode == HttpStatusCode.OK)
-		{
-			MobileServiceUser mobileServiceUser = response.Data;
-			_client.User = mobileServiceUser;
-			Debug.Log("Authorized UserId: " + _client.User.user.userId );
-
-			_user = new User {
-				UserId = _client.User.user.userId,
-				FirstName = UserData.FirstName,
-				LastName = UserData.LastName
-				//FriendIds=new List<string>{"id1","id2"}
-			};
-
-			//query the users table to see if user is already in DB. If not, calls insertnewuser
-			GetUserWithUserId ();
-		}
-		else
-		{
-			Debug.Log("Authorization Error: " + response.StatusCode);
-			_message = Message.Create ("Login failed", "Error");
-		}
-	}
 
 	//get all usernames that match
 	public void GetUsersWithUsername(string firstName, string lastName)
@@ -770,64 +727,6 @@ public class GameMediator : MonoBehaviour
 		else
 		{
 			Debug.Log("Read Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
-		}
-	}
-
-	private void GetUserWithUserId()
-	{
-		string filter = string.Format("UserId eq '{0}'", _user.UserId);
-		CustomQuery query = new CustomQuery(filter);
-		QueryWithUserId(query);
-
-	}
-
-	private void QueryWithUserId(CustomQuery query)
-	{
-		_usersTable.Query<User> (query, OnUserIdReadCompleted);
-
-	}
-
-	private void OnUserIdReadCompleted(IRestResponse<List<User>> response)
-	{
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Debug.Log("OnUserReadCompleted data: " + response.ResponseUri +" data: "+ response.Content);
-			List<User> items = response.Data;
-			Debug.Log("Read items count: " + items.Count);
-			//			_isPaginated = false; // default query has max. of 50 records and is not paginated so disable infinite scroll 
-
-			if (items.Count >= 1) 
-			{
-				print ("user is already in Database");
-
-			} else {
-
-				InsertNewUser ();
-			}
-		}
-		else
-		{
-			Debug.Log("Read Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
-		}
-	}
-
-	public void InsertNewUser()
-	{
-		if (_user != null) {
-			_usersTable.Insert<User> (_user, OnInsertUserCompleted);
-		}
-	}
-
-	private void OnInsertUserCompleted(IRestResponse<User> response)
-	{
-		if (response.StatusCode == HttpStatusCode.Created)
-		{
-			Debug.Log( "OnInsertUserCompleted: " + response.Data );
-			User item = response.Data;
-		}
-		else
-		{
-			Debug.Log("Insert User Error Status:" + response.StatusCode + " Uri: "+response.ResponseUri );
 		}
 	}
 
