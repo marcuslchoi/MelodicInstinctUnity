@@ -22,19 +22,17 @@ public class FBScript : MonoBehaviour {
 
 	private string _appUrl = "http://melodicinstinct.azurewebsites.net";
 	private MobileServiceClient _client;
-	private MobileServiceTable<User> _usersTable;
 	private User _user;	//this is me
 	private Message _message; //used for login
 
 	void Awake()
 	{
 		FB.Init (SetInit, OnHideUnity);
-
 		_client = MobileServiceClient.Create(_appUrl);
-		_usersTable = _client.GetTable<User> ("Users");
 
 		Constants.Client = _client;
-		Constants.UsersTable = _usersTable;
+
+		Constants.UsersTable = _client.GetTable<User> ("Users");
 		Constants.HighScoresTable = _client.GetTable<Highscore>("Highscores");
 	}
 
@@ -173,7 +171,7 @@ public class FBScript : MonoBehaviour {
 
 	private void QueryWithUserId(CustomQuery query)
 	{
-		_usersTable.Query<User> (query, OnUserIdReadCompleted);
+		Constants.UsersTable.Query<User> (query, OnUserIdReadCompleted);
 
 	}
 
@@ -204,7 +202,7 @@ public class FBScript : MonoBehaviour {
 	public void InsertNewUser()
 	{
 		if (_user != null) {
-			_usersTable.Insert<User> (_user, OnInsertUserCompleted);
+			Constants.UsersTable.Insert<User> (_user, OnInsertUserCompleted);
 		}
 	}
 

@@ -10,6 +10,7 @@ public class Constants : MonoBehaviour {
 	public static string higherOctIndicator = MusicNote.NotesFlat[totalTones].Substring(MusicNote.NotesFlat[totalTones].Length-1); 
 	public static int SECONDS_PER_MIN = 60;
 
+	//TODO: DON'T NEED CLIENT HERE, REMOVE BEFORE RELEASE
 	public static MobileServiceClient Client;
 	public static MobileServiceTable<Highscore> HighScoresTable;
 	public static MobileServiceTable<User> UsersTable;
