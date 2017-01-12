@@ -63,18 +63,8 @@ public class GameMediator : MonoBehaviour
 	Dictionary<string,GameObject> SolfegeToAnimation = new Dictionary<string,GameObject>();
 
 	//Azure stuff
-	private string _appUrl = "http://melodicinstinct.azurewebsites.net";
 	private Highscore _score;
-	// App Service Rest Client
-	private MobileServiceClient _client;
-	// App Service Table defined using a DataModel
-	private MobileServiceTable<Highscore> _highScoresTable;
-	private MobileServiceTable<User> _usersTable;
 	private uint _skip = 0; // no of records to skip
-	private User _user;
-	private Message _message; //used for login
-
-	private string _facebookAccessToken = "";
 
 	// infinite scroll vars
 //	private bool _isPaginated = false; // only enable infinite scrolling for paginated results
@@ -105,7 +95,7 @@ public class GameMediator : MonoBehaviour
 		//from highscoresdemo
 
 		// Create App Service client (Using factory Create method to force 'https' url)
-		_client = MobileServiceClient.Create(_appUrl); //new MobileServiceClient(_appUrl);
+//		_client = MobileServiceClient.Create(_appUrl); //new MobileServiceClient(_appUrl);
 
 		//LOGIN TO AZURE
 		if (FB.IsLoggedIn) {
@@ -116,8 +106,8 @@ public class GameMediator : MonoBehaviour
 			UserData.FirstName = "TEST";
 
 		// Get App Service 'Highscores' table
-		_highScoresTable = _client.GetTable<Highscore>("Highscores");
-		_usersTable = _client.GetTable<User>("Users");
+//		_highScoresTable = Constants.Client.GetTable<Highscore>("Highscores");
+//		_usersTable = _client.GetTable<User>("Users");
 
 		GetAllHighscores ();
 		GetUsersWithUsername ("Marcus","Choi");
@@ -703,7 +693,7 @@ public class GameMediator : MonoBehaviour
 
 	private void QueryWithUsername(CustomQuery query)
 	{
-		_usersTable.Query<User> (query, OnUsernameReadCompleted);
+		Constants.UsersTable.Query<User> (query, OnUsernameReadCompleted);
 
 	}
 
@@ -735,7 +725,7 @@ public class GameMediator : MonoBehaviour
 		Highscore score = GetScore ();
 
 		if(score != null)
-			_highScoresTable.Insert<Highscore>(score, OnInsertCompleted);
+			Constants.HighScoresTable.Insert<Highscore>(score, OnInsertCompleted);
 	}
 
 	private void OnInsertCompleted(IRestResponse<Highscore> response)
@@ -809,7 +799,7 @@ public class GameMediator : MonoBehaviour
 	private void GetPageHighscores()
 	{
 		CustomQuery query = new CustomQuery("", "score desc", _noPageResults, _skip, "id,username,score,scale");
-		_highScoresTable.Query<NestedResults<Highscore>>(query, OnReadNestedResultsCompleted);
+		Constants.HighScoresTable.Query<NestedResults<Highscore>>(query, OnReadNestedResultsCompleted);
 	}
 
 	private void OnReadNestedResultsCompleted(IRestResponse<NestedResults<Highscore>> response)
@@ -859,7 +849,7 @@ public class GameMediator : MonoBehaviour
 
 	private void Query(CustomQuery query)
 	{
-		_highScoresTable.Query<Highscore>(query, OnReadCompleted);
+		Constants.HighScoresTable.Query<Highscore>(query, OnReadCompleted);
 	}
 
 	void DisplayScores()

@@ -12,6 +12,7 @@ public class Constants : MonoBehaviour {
 
 	public static MobileServiceClient Client;
 	public static MobileServiceTable<Highscore> HighScoresTable;
+	public static MobileServiceTable<User> UsersTable;
 
 	public static List<string> MAJOR_TONES = new List<string>{"DO","RE","MI","FA","SOL","LA","TI"};
 

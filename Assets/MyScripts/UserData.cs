@@ -19,6 +19,6 @@ public class UserData : MonoBehaviour {
 		set;
 	}
 
-	public static string FBAccessToken { get; set; }
+	public static string UserId { get; set; }
 
 }

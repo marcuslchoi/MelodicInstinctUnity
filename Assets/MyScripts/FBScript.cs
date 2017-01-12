@@ -32,6 +32,10 @@ public class FBScript : MonoBehaviour {
 
 		_client = MobileServiceClient.Create(_appUrl);
 		_usersTable = _client.GetTable<User> ("Users");
+
+		Constants.Client = _client;
+		Constants.UsersTable = _usersTable;
+		Constants.HighScoresTable = _client.GetTable<Highscore>("Highscores");
 	}
 
 	void SetInit()
@@ -68,7 +72,7 @@ public class FBScript : MonoBehaviour {
 
 			if (FB.IsLoggedIn) {
 				Debug.Log ("fb is logged in");
-				UserData.FBAccessToken = Facebook.Unity.AccessToken.CurrentAccessToken.TokenString;
+				//UserData.FBAccessToken = Facebook.Unity.AccessToken.CurrentAccessToken.TokenString;
 
 			}
 			else
