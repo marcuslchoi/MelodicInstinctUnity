@@ -143,8 +143,10 @@ public class FBScript : MonoBehaviour {
 			_client.User = mobileServiceUser;
 //			Debug.Log("Authorized UserId: " + _client.User.user.userId );
 
+			UserData.UserId = _client.User.user.userId;
+
 			_user = new User {
-				UserId = _client.User.user.userId,
+				UserId = UserData.UserId,
 				FirstName = UserData.FirstName,
 				LastName = UserData.LastName
 					//FriendIds=new List<string>{"id1","id2"}
@@ -158,6 +160,7 @@ public class FBScript : MonoBehaviour {
 			Debug.Log("Authorization Error: " + response.StatusCode);
 			_message = Message.Create ("Login failed", "Error");
 		}
+			
 	}
 
 	private void GetUserWithUserId()
