@@ -282,7 +282,7 @@ public class GameMediator : MonoBehaviour
 
 			yield return new WaitForSeconds (timeBetweenChords);
 		}
-
+        
 		//start the game
 		StartCoroutine (StartGame ());
 
