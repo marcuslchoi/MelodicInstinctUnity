@@ -290,6 +290,7 @@ public class GameMediator : MonoBehaviour
 
 	IEnumerator StartGame()
 	{
+        //asdf
 		timer.StartTimer ();
 
 		if (isDrumsGame) {
