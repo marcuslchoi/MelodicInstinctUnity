@@ -1,0 +1,37 @@
+﻿<Properties StartupConfiguration="{8BA3F5D1-E75E-6C6F-7AD9-D51FB0700CF9}|" RefactoringSettings.EnableRefactorings="True">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/MyScripts/UfoScript.cs">
+    <Files>
+      <File FileName="Assets/MyScripts/LobbyMediator.cs" Line="99" Column="31" />
+      <File FileName="Assets/MyScripts/FBScript.cs" />
+      <File FileName="Assets/MyScripts/Constants.cs" />
+      <File FileName="Assets/MyScripts/GameMediator.cs" Line="111" Column="1" />
+      <File FileName="Assets/MyScripts/CatScript.cs" />
+      <File FileName="Assets/MyScripts/SpinningTopScript.cs" />
+      <File FileName="Assets/MyScripts/UfoScript.cs" Line="41" Column="3" />
+      <File FileName="Assets/Azure/Scripts/DataModels/Highscore.cs" />
+      <File FileName="Assets/MyScripts/ScoreBar.cs" />
+      <File FileName="Assets/MyScripts/ScaleTone.cs" />
+      <File FileName="Assets/MyScripts/Melody.cs" Line="201" Column="36" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="MelodicInstinctUnity" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="MyScripts" expanded="True">
+                <Node name="UfoScript.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="c218b956-1d82-4173-9dd2-6cdf5e873199" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

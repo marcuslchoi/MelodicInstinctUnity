@@ -62,7 +62,7 @@ namespace Tacticsoft
         /// (number of rows changed, etc)
         /// </summary>
         public void ReloadData() {
-            Profiler.BeginSample("TableView.ReloadData for dataSource:" + m_dataSource.GetType().Name, this);
+            UnityEngine.Profiling.Profiler.BeginSample("TableView.ReloadData for dataSource:" + m_dataSource.GetType().Name, this);
 
             if (m_verticalLayoutGroup == null) {
                 Debug.LogError("Vertical Layout Group is null");
@@ -99,7 +99,7 @@ namespace Tacticsoft
             RecalculateVisibleRowsFromScratch();
             m_requiresReload = false;
 
-            Profiler.EndSample();
+            UnityEngine.Profiling.Profiler.EndSample();
 
         }
 

@@ -132,7 +132,7 @@ public class GameMediator : MonoBehaviour
 
 		MelodyLengthSlider.minValue = 1f;
 		MelodyLengthSlider.maxValue = 8f;
-		MelodyLengthSlider.value = 4f;;
+		MelodyLengthSlider.value = 3f;;
 
 		//TODO: DRY
 		tonic = TonicText.text;
