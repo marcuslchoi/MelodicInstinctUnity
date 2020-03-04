@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using Parse;
+//using Parse;
 
 using System;
 using System.Net;

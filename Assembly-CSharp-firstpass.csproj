@@ -410,9 +410,6 @@
  <Reference Include="Pathfinding.JsonFx">
  <HintPath>/Users/marcuschoi/repos/MelodicInstinctUnity/Assets/Azure/Plugins/Pathfinding.JsonFx.dll</HintPath>
  </Reference>
- <Reference Include="Parse.Unity">
- <HintPath>/Users/marcuschoi/repos/MelodicInstinctUnity/Assets/Parse/Parse.Unity.dll</HintPath>
- </Reference>
  <Reference Include="Unity.Analytics.Tracker">
  <HintPath>/Users/marcuschoi/repos/MelodicInstinctUnity/Library/PackageCache/com.unity.analytics@3.3.5/Unity.Analytics.Tracker.dll</HintPath>
  </Reference>
